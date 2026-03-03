@@ -13,58 +13,6 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <!-- Loading Screen Overlay -->
-    <div
-      id="loading-overlay"
-      style="
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        background: #fff8fc;
-        z-index: 9999;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-direction: column;
-      "
-    >
-      <div
-        style="
-          font-size: 2rem;
-          color: #b01455;
-          font-family: &quot;Comic Sans MS&quot;, cursive;
-          margin-bottom: 1.5rem;
-        "
-      >
-        Loading...
-      </div>
-      <div id="loading-progress" style="font-size: 1.2rem; color: #b01455">
-        0%
-      </div>
-      <div style="margin-top: 1.5rem">
-        <img
-          src="Images/Animation/walk1.png"
-          alt="Loading Kitty"
-          style="width: 80px; animation: spin 1.2s linear infinite"
-        />
-      </div>
-    </div>
-    <style>
-      @keyframes spin {
-        100% {
-          transform: rotate(360deg);
-        }
-      }
-      #loading-overlay {
-        transition: opacity 0.5s;
-      }
-      #loading-overlay.hide {
-        opacity: 0;
-        pointer-events: none;
-      }
-    </style>
     <!-- PASTE YOUR ENTIRE road.svg CONTENT BELOW -->
     <div
       id="svg-container"
@@ -204,63 +152,62 @@
         </foreignObject>
       </svg>
     </div>
+    <div
+      id="loading-overlay"
+      style="
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(255, 255, 255, 0.9);
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      "
+    >
+      <div style="font-size: 2em; color: #b01455; margin-bottom: 30px">
+        Loading...
+      </div>
+      <div style="width: 60vw; max-width: 400px">
+        <div
+          style="
+            background: #eee;
+            border-radius: 20px;
+            height: 24px;
+            width: 100%;
+            overflow: hidden;
+            box-shadow: 0 2px 8px #ffb6d555;
+          "
+        >
+          <div
+            id="loading-bar"
+            style="
+              height: 100%;
+              width: 0%;
+              background: linear-gradient(90deg, #ffb6d5 0%, #ffe0ec 100%);
+              transition: width 0.3s;
+              border-radius: 20px;
+            "
+          ></div>
+        </div>
+        <div
+          id="loading-percent"
+          style="
+            text-align: center;
+            margin-top: 8px;
+            color: #b01455;
+            font-size: 1.1em;
+          "
+        >
+          0%
+        </div>
+      </div>
+    </div>
     <script src="eye_blink.js"></script>
     <script>
-      // --- Loading Screen Logic ---
-      const imageSources = [
-        // Walk frames
-        "Images/Animation/walk1.png",
-        "Images/Animation/walk2.png",
-        "Images/Animation/walk3.png",
-        // Idle frames (kuromi)
-        "Images/Animation/kuromi1.png",
-        "Images/Animation/kuromi2.png",
-        "Images/Animation/kuromi3.png",
-        // Idle frames (boy)
-        "Images/Animation/Boy1.png",
-        "Images/Animation/Boy2.png",
-        "Images/Animation/Boy3.png",
-        // Other frames
-        "Images/Animation/death.png",
-        "Images/Animation/kiss.png",
-        "Images/Animation/kiss_boy.png",
-        // Maze/road SVG
-        "Images/Maze/road3.svg",
-      ];
-      let loadedCount = 0;
-      const loadingOverlay = document.getElementById("loading-overlay");
-      const loadingProgress = document.getElementById("loading-progress");
-      function updateProgress() {
-        const percent = Math.round((loadedCount / imageSources.length) * 100);
-        loadingProgress.textContent = percent + "%";
-      }
-      function preloadImages(sources, allDone) {
-        if (!sources.length) return allDone();
-        sources.forEach((src) => {
-          const img = new window.Image();
-          img.onload = img.onerror = () => {
-            loadedCount++;
-            updateProgress();
-            if (loadedCount === sources.length) {
-              setTimeout(allDone, 300); // slight delay for smoothness
-            }
-          };
-          img.src = src;
-        });
-      }
-      // Prevent animation/game from starting until images are loaded
-      window.__allImagesLoaded = false;
-      function startGameAfterLoading() {
-        loadingOverlay.classList.add("hide");
-        setTimeout(() => {
-          loadingOverlay.style.display = "none";
-          window.__allImagesLoaded = true;
-          // If the game has a start function, call it here if needed
-          if (typeof window.startGame === "function") window.startGame();
-        }, 500);
-      }
-      preloadImages(imageSources, startGameAfterLoading);
-      // --- End Loading Screen Logic ---
       // Responsive resize for SVG
       function resizeSVG() {
         const svg = document.getElementById("game");
@@ -277,176 +224,232 @@
       window.addEventListener("orientationchange", resizeSVG);
       document.addEventListener("DOMContentLoaded", resizeSVG);
 
-      const path = document.getElementById("roadPath");
-      const evilPath = document.getElementById("evilPath");
-      const character = document.getElementById("character");
-
-      // --- Wait for images to load before starting animation ---
-      function waitForImagesThenStart() {
-        if (window.__allImagesLoaded) {
-          requestAnimationFrame(animate);
-        } else {
-          setTimeout(waitForImagesThenStart, 50);
-        }
-      }
-      // Replace the initial call to requestAnimationFrame(animate) with:
-      waitForImagesThenStart();
-      let popupsEnabled = true;
-      let wrongAnswered = false;
-      const roadPathEnd = 575;
-      const evilPathEnd = 90;
-      // Walking frames (ensure these files exist in Animation/)
-      const walkFrames = [
+      // --- IMAGE PRELOAD BLOCKER ---
+      const allImagePaths = [
+        // Maze/road
+        "Images/Maze/road3.svg",
+        // Kuromi idle
+        "Images/Animation/kuromi1.png",
+        "Images/Animation/kuromi2.png",
+        "Images/Animation/kuromi3.png",
+        // Boy idle
+        "Images/Animation/Boy1.png",
+        "Images/Animation/Boy2.png",
+        "Images/Animation/Boy3.png",
+        // Character walk
         "Images/Animation/walk1.png",
         "Images/Animation/walk2.png",
         "Images/Animation/walk3.png",
+        // Death, kiss, etc.
+        "Images/Animation/death.png",
+        "Images/Animation/kiss.png",
+        "Images/Animation/kiss_boy.png",
       ];
-      const deathFrame = ["Images/Animation/death.png"];
-      const kissFrame = ["Images/Animation/kiss.png"];
-      const kissBoyFrame = ["Images/Animation/kiss_boy.png"];
-      let frameIndex = 0;
-      const frameInterval = 120; // ms between frame changes
-
-      const length = path.getTotalLength();
-      let distance = 0;
-
-      let onEvilPath = false;
-      let evilDistance = 0;
-      const evilLength = evilPath.getTotalLength();
-
-      // Define checkpoints (distances along the path)
-      const checkpoints = [100, 215, 315]; // Adjust as needed
-      let checkpointIndex = 0;
-      const pauseDuration = 1000; // milliseconds
-
-      let lastFrameTime = 0;
-      // For animated transition to boy
-      let transitioningToBoy = false;
-      let transitionStart = null;
-      let transitionFrom = { x: 0, y: 0 };
-      let transitionTo = { x: 0, y: 0 };
-      let transitionProgress = 0;
-      const transitionDuration = 1500; // ms (slower)
-
-      // Ease-in-out function
-      function easeInOut(t) {
-        return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
-      }
-
-      function showCheckpointPopup(callback) {
-        const bubble = document.getElementById("svg-speech-bubble");
-        const questionDiv = document.getElementById("bubble-question");
-        const yesBtn = document.getElementById("bubble-yes");
-        const noBtn = document.getElementById("bubble-no");
-
-        // Get the current question and options
-        const q = checkpointQuestions[checkpointIndex];
-        questionDiv.textContent = q.text;
-        yesBtn.textContent = q.options[0];
-        noBtn.textContent = q.options[1];
-
-        // Show the bubble (position is set by x/y attributes)
-        bubble.style.display = "";
-
-        function close(answer) {
-          bubble.style.display = "none";
-          yesBtn.removeEventListener("click", onYes);
-          noBtn.removeEventListener("click", onNo);
-          // Check if answer is correct
-          if (answer === q.answer) {
-            callback(true); // move forward
-          } else {
-            callback(false); // wrong answer
-          }
+      let imagesLoaded = 0;
+      let allLoaded = false;
+      function preloadAllImages(paths, onAllLoaded) {
+        let done = false;
+        const bar = document.getElementById("loading-bar");
+        const percent = document.getElementById("loading-percent");
+        function updateBar() {
+          const pct = Math.round((imagesLoaded / paths.length) * 100);
+          if (bar) bar.style.width = pct + "%";
+          if (percent) percent.textContent = pct + "%";
         }
-        function onYes() {
-          close(q.options[0]);
-        }
-        function onNo() {
-          close(q.options[1]);
-        }
-        yesBtn.addEventListener("click", onYes);
-        noBtn.addEventListener("click", onNo);
-      }
-
-      // ...existing code...
-
-      function renderCharacter(now) {
-        let point,
-          next,
-          angle = 0;
-
-        if (onEvilPath) {
-          point = evilPath.getPointAtLength(evilDistance);
-          next = evilPath.getPointAtLength(evilDistance + 1);
-        } else {
-          point = path.getPointAtLength(distance);
-          next = path.getPointAtLength(distance + 1);
-        }
-
-        if (distance > 20) {
-          character.setAttribute("opacity", "1");
-        } else if (distance <= 20) {
-          character.setAttribute("opacity", "0");
-        }
-
-        // If at end of road path, move next to the boy image
-        // If animating transition to boy, interpolate position
-        if (transitioningToBoy) {
-          // Ease-in-out interpolation
-          const eased = easeInOut(transitionProgress);
-          const x =
-            transitionFrom.x + (transitionTo.x - transitionFrom.x) * eased;
-          const y =
-            transitionFrom.y + (transitionTo.y - transitionFrom.y) * eased;
-          angle = 0;
-          let offsetX = 0;
-          let offsetY = 0;
-          character.setAttribute("x", x + offsetX);
-          character.setAttribute("y", y + offsetY);
-          character.setAttribute(
-            "transform",
-            `rotate(0, ${x + 20}, ${y + 20})`,
-          );
-          // Show walk frames during transition, but switch to kissFrame at the end
-          if (transitionProgress >= 1) {
-            character.setAttribute("href", kissFrame[0]);
-            // Set boy's frame to kissBoyFrame
-            const boy = document.getElementById("boy");
-            if (boy) {
-              boy.setAttribute("href", kissBoyFrame[0]);
-              if (window.stopBoyIdleAnimation) {
-                window.stopBoyIdleAnimation();
-              }
+        for (const src of paths) {
+          const img = new window.Image();
+          img.onload = img.onerror = function () {
+            imagesLoaded++;
+            updateBar();
+            if (!done && imagesLoaded === paths.length) {
+              done = true;
+              updateBar();
+              onAllLoaded();
             }
-          } else if (!lastFrameTime || now - lastFrameTime > frameInterval) {
-            character.setAttribute("href", walkFrames[frameIndex]);
-            frameIndex = (frameIndex + 1) % walkFrames.length;
-            lastFrameTime = now;
+          };
+          img.src = src;
+        }
+        updateBar();
+      }
+
+      // Wait for DOMContentLoaded and all images
+      document.addEventListener("DOMContentLoaded", function () {
+        preloadAllImages(allImagePaths, function () {
+          allLoaded = true;
+          const overlay = document.getElementById("loading-overlay");
+          if (overlay) overlay.style.display = "none";
+          startGame();
+        });
+      });
+
+      // --- GAME LOGIC MOVED TO FUNCTION ---
+      function startGame() {
+        const path = document.getElementById("roadPath");
+        const evilPath = document.getElementById("evilPath");
+        const character = document.getElementById("character");
+        let popupsEnabled = true;
+        let wrongAnswered = false;
+        const roadPathEnd = 575;
+        const evilPathEnd = 90;
+        // Walking frames (ensure these files exist in Animation/)
+        const walkFrames = [
+          "Images/Animation/walk1.png",
+          "Images/Animation/walk2.png",
+          "Images/Animation/walk3.png",
+        ];
+        const deathFrame = ["Images/Animation/death.png"];
+        const kissFrame = ["Images/Animation/kiss.png"];
+        const kissBoyFrame = ["Images/Animation/kiss_boy.png"];
+        let frameIndex = 0;
+        const frameInterval = 120; // ms between frame changes
+
+        const length = path.getTotalLength();
+        let distance = 0;
+
+        let onEvilPath = false;
+        let evilDistance = 0;
+        const evilLength = evilPath.getTotalLength();
+
+        // Define checkpoints (distances along the path)
+        const checkpoints = [100, 215, 315]; // Adjust as needed
+        let checkpointIndex = 0;
+        const pauseDuration = 1000; // milliseconds
+
+        let lastFrameTime = 0;
+        // For animated transition to boy
+        let transitioningToBoy = false;
+        let transitionStart = null;
+        let transitionFrom = { x: 0, y: 0 };
+        let transitionTo = { x: 0, y: 0 };
+        let transitionProgress = 0;
+        const transitionDuration = 1500; // ms (slower)
+
+        // Ease-in-out function
+        function easeInOut(t) {
+          return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+        }
+
+        // ...existing code from here (all game logic)...
+        // Copy all functions and animation loop below, replacing the originals
+
+        // ...existing code...
+        function showCheckpointPopup(callback) {
+          const bubble = document.getElementById("svg-speech-bubble");
+          const questionDiv = document.getElementById("bubble-question");
+          const yesBtn = document.getElementById("bubble-yes");
+          const noBtn = document.getElementById("bubble-no");
+
+          // Get the current question and options
+          const q = checkpointQuestions[checkpointIndex];
+          questionDiv.textContent = q.text;
+          yesBtn.textContent = q.options[0];
+          noBtn.textContent = q.options[1];
+
+          // Show the bubble (position is set by x/y attributes)
+          bubble.style.display = "";
+
+          function close(answer) {
+            bubble.style.display = "none";
+            yesBtn.removeEventListener("click", onYes);
+            noBtn.removeEventListener("click", onNo);
+            // Check if answer is correct
+            if (answer === q.answer) {
+              callback(true); // move forward
+            } else {
+              callback(false); // wrong answer
+            }
           }
-          // Log for debugging
-          //console.log(
-          //  `Transitioning to boy - progress: ${(
-          //    transitionProgress * 100
-          //  ).toFixed(2)}%, position: (${x.toFixed(2)}, ${y.toFixed(2)})`,
-          //);
-        } else if (onEvilPath) {
-          if (evilDistance > 60) {
+          function onYes() {
+            close(q.options[0]);
+          }
+          function onNo() {
+            close(q.options[1]);
+          }
+          yesBtn.addEventListener("click", onYes);
+          noBtn.addEventListener("click", onNo);
+        }
+
+        function renderCharacter(now) {
+          let point,
+            next,
             angle = 0;
-            character.setAttribute("x", point.x - 30);
-            character.setAttribute("y", point.y - 30);
+
+          if (onEvilPath) {
+            point = evilPath.getPointAtLength(evilDistance);
+            next = evilPath.getPointAtLength(evilDistance + 1);
+          } else {
+            point = path.getPointAtLength(distance);
+            next = path.getPointAtLength(distance + 1);
+          }
+
+          if (distance > 20) {
+            character.setAttribute("opacity", "1");
+          } else if (distance <= 20) {
+            character.setAttribute("opacity", "0");
+          }
+
+          // If at end of road path, move next to the boy image
+          // If animating transition to boy, interpolate position
+          if (transitioningToBoy) {
+            // Ease-in-out interpolation
+            const eased = easeInOut(transitionProgress);
+            const x =
+              transitionFrom.x + (transitionTo.x - transitionFrom.x) * eased;
+            const y =
+              transitionFrom.y + (transitionTo.y - transitionFrom.y) * eased;
+            angle = 0;
+            let offsetX = 0;
+            let offsetY = 0;
+            character.setAttribute("x", x + offsetX);
+            character.setAttribute("y", y + offsetY);
             character.setAttribute(
               "transform",
-              `rotate(0, ${point.x}, ${point.y})`,
+              `rotate(0, ${x + 20}, ${y + 20})`,
             );
-          } else if (evilDistance < 20) {
-            angle = 0;
-            character.setAttribute("x", point.x - 30);
-            character.setAttribute("y", point.y - 30);
-            character.setAttribute(
-              "transform",
-              `rotate(0, ${point.x}, ${point.y})`,
-            );
+            // Show walk frames during transition, but switch to kissFrame at the end
+            if (transitionProgress >= 1) {
+              character.setAttribute("href", kissFrame[0]);
+              // Set boy's frame to kissBoyFrame
+              const boy = document.getElementById("boy");
+              if (boy) {
+                boy.setAttribute("href", kissBoyFrame[0]);
+                if (window.stopBoyIdleAnimation) {
+                  window.stopBoyIdleAnimation();
+                }
+              }
+            } else if (!lastFrameTime || now - lastFrameTime > frameInterval) {
+              character.setAttribute("href", walkFrames[frameIndex]);
+              frameIndex = (frameIndex + 1) % walkFrames.length;
+              lastFrameTime = now;
+            }
+          } else if (onEvilPath) {
+            if (evilDistance > 60) {
+              angle = 0;
+              character.setAttribute("x", point.x - 30);
+              character.setAttribute("y", point.y - 30);
+              character.setAttribute(
+                "transform",
+                `rotate(0, ${point.x}, ${point.y})`,
+              );
+            } else if (evilDistance < 20) {
+              angle = 0;
+              character.setAttribute("x", point.x - 30);
+              character.setAttribute("y", point.y - 30);
+              character.setAttribute(
+                "transform",
+                `rotate(0, ${point.x}, ${point.y})`,
+              );
+            } else {
+              angle =
+                (Math.atan2(next.y - point.y, next.x - point.x) * 180) /
+                Math.PI;
+              character.setAttribute("x", point.x - 30);
+              character.setAttribute("y", point.y - 30);
+              character.setAttribute(
+                "transform",
+                `rotate(${angle}, ${point.x}, ${point.y})`,
+              );
+            }
           } else {
             angle =
               (Math.atan2(next.y - point.y, next.x - point.x) * 180) / Math.PI;
@@ -457,131 +460,121 @@
               `rotate(${angle}, ${point.x}, ${point.y})`,
             );
           }
-        } else {
-          angle =
-            (Math.atan2(next.y - point.y, next.x - point.x) * 180) / Math.PI;
-          character.setAttribute("x", point.x - 30);
-          character.setAttribute("y", point.y - 30);
-          character.setAttribute(
-            "transform",
-            `rotate(${angle}, ${point.x}, ${point.y})`,
-          );
-        }
-        // If at end of evil path, show death frame
-        if (onEvilPath && evilDistance >= evilPathEnd) {
-          //console.log("Reached end of evil path, showing death frame");
-          character.setAttribute("href", deathFrame[0]);
-        } else if (
-          !transitioningToBoy &&
-          (!lastFrameTime || now - lastFrameTime > frameInterval)
-        ) {
-          character.setAttribute("href", walkFrames[frameIndex]);
-          frameIndex = (frameIndex + 1) % walkFrames.length;
-          lastFrameTime = now;
-        }
-      }
-
-      function animate(now) {
-        // Clamp distances to their respective ends
-        if (distance > roadPathEnd) distance = roadPathEnd;
-        if (evilDistance > evilPathEnd) evilDistance = evilPathEnd;
-
-        // If character reached end of road path, start animated transition to boy
-        if (!onEvilPath && distance >= 570) {
-          if (!transitioningToBoy) {
-            // Setup transition
-            const boy = document.getElementById("boy");
-            const boyX = parseFloat(boy.getAttribute("x"));
-            const boyY = parseFloat(boy.getAttribute("y"));
-            const offsetX = -15;
-            const offsetY = 0;
-            transitionTo.x = boyX + offsetX;
-            transitionTo.y = boyY + offsetY;
-            // Get current character position at end of path
-            const point = path.getPointAtLength(distance);
-            transitionFrom.x = point.x - 30;
-            transitionFrom.y = point.y - 30;
-            transitionProgress = 0;
-            transitionStart = now;
-            transitioningToBoy = true;
-          } else {
-            // Animate transition
-            transitionProgress = Math.min(
-              1,
-              (now - transitionStart) / transitionDuration,
-            );
-            renderCharacter(now);
-            if (transitionProgress < 1) {
-              requestAnimationFrame(animate);
-            }
-            // After transition, keep at final position and show kissFrame
-            // (handled in renderCharacter)
-            return;
+          // If at end of evil path, show death frame
+          if (onEvilPath && evilDistance >= evilPathEnd) {
+            character.setAttribute("href", deathFrame[0]);
+          } else if (
+            !transitioningToBoy &&
+            (!lastFrameTime || now - lastFrameTime > frameInterval)
+          ) {
+            character.setAttribute("href", walkFrames[frameIndex]);
+            frameIndex = (frameIndex + 1) % walkFrames.length;
+            lastFrameTime = now;
           }
         }
-        renderCharacter(now);
-        // Check for checkpoint
-        if (
-          popupsEnabled &&
-          checkpointIndex < checkpoints.length &&
-          distance >= checkpoints[checkpointIndex]
-        ) {
-          // Pause animation for checkpoint popup
-          showCheckpointPopup((isCorrect) => {
-            if (isCorrect) {
-              checkpointIndex++;
-              distance += 0.6;
-              if (distance > roadPathEnd) distance = roadPathEnd;
-            } else {
-              popupsEnabled = false;
-              wrongAnswered = true;
-              distance = checkpoints[checkpointIndex] + 0.6;
-              if (distance > roadPathEnd) distance = roadPathEnd;
-              checkpointIndex++;
-            }
-            // Resume animation after answer
-            requestAnimationFrame(animate);
-          });
-          return;
-        } else {
-          if (wrongAnswered && !onEvilPath && distance >= 360) {
-            onEvilPath = true;
-            // Find closest evil path point to current road path position
-            console.log("Switching to evil path");
-          }
-        }
-        if (!onEvilPath && distance < roadPathEnd) {
-          distance += 0.6;
+
+        function animate(now) {
+          // Clamp distances to their respective ends
           if (distance > roadPathEnd) distance = roadPathEnd;
-        } else if (onEvilPath && evilDistance < evilPathEnd) {
-          evilDistance += 0.6;
           if (evilDistance > evilPathEnd) evilDistance = evilPathEnd;
-        }
-        if (
-          (!onEvilPath && distance < roadPathEnd) ||
-          (onEvilPath && evilDistance < evilPathEnd)
-        ) {
-          requestAnimationFrame(animate);
-        } else if (onEvilPath && evilDistance >= evilPathEnd) {
-          // Ensure death frame is set at the very end
-          renderCharacter(performance.now());
-          // Restart game after 2 seconds
-          setTimeout(() => {
-            // Reset all state variables
-            distance = 0;
-            evilDistance = 0;
-            onEvilPath = false;
-            wrongAnswered = false;
-            popupsEnabled = true;
-            checkpointIndex = 0;
-            frameIndex = 0;
-            requestAnimationFrame(animate);
-          }, 2000);
-        }
-        // If at end, do not call requestAnimationFrame again (animation stops)
-      }
 
-      requestAnimationFrame(animate);
+          // If character reached end of road path, start animated transition to boy
+          if (!onEvilPath && distance >= 570) {
+            if (!transitioningToBoy) {
+              // Setup transition
+              const boy = document.getElementById("boy");
+              const boyX = parseFloat(boy.getAttribute("x"));
+              const boyY = parseFloat(boy.getAttribute("y"));
+              const offsetX = -15;
+              const offsetY = 0;
+              transitionTo.x = boyX + offsetX;
+              transitionTo.y = boyY + offsetY;
+              // Get current character position at end of path
+              const point = path.getPointAtLength(distance);
+              transitionFrom.x = point.x - 30;
+              transitionFrom.y = point.y - 30;
+              transitionProgress = 0;
+              transitionStart = now;
+              transitioningToBoy = true;
+            } else {
+              // Animate transition
+              transitionProgress = Math.min(
+                1,
+                (now - transitionStart) / transitionDuration,
+              );
+              renderCharacter(now);
+              if (transitionProgress < 1) {
+                requestAnimationFrame(animate);
+              }
+              // After transition, keep at final position and show kissFrame
+              // (handled in renderCharacter)
+              return;
+            }
+          }
+          renderCharacter(now);
+          // Check for checkpoint
+          if (
+            popupsEnabled &&
+            checkpointIndex < checkpoints.length &&
+            distance >= checkpoints[checkpointIndex]
+          ) {
+            // Pause animation for checkpoint popup
+            showCheckpointPopup((isCorrect) => {
+              if (isCorrect) {
+                checkpointIndex++;
+                distance += 0.6;
+                if (distance > roadPathEnd) distance = roadPathEnd;
+              } else {
+                popupsEnabled = false;
+                wrongAnswered = true;
+                distance = checkpoints[checkpointIndex] + 0.6;
+                if (distance > roadPathEnd) distance = roadPathEnd;
+                checkpointIndex++;
+              }
+              // Resume animation after answer
+              requestAnimationFrame(animate);
+            });
+            return;
+          } else {
+            if (wrongAnswered && !onEvilPath && distance >= 360) {
+              onEvilPath = true;
+              // Find closest evil path point to current road path position
+              console.log("Switching to evil path");
+            }
+          }
+          if (!onEvilPath && distance < roadPathEnd) {
+            distance += 0.6;
+            if (distance > roadPathEnd) distance = roadPathEnd;
+          } else if (onEvilPath && evilDistance < evilPathEnd) {
+            evilDistance += 0.6;
+            if (evilDistance > evilPathEnd) evilDistance = evilPathEnd;
+          }
+          if (
+            (!onEvilPath && distance < roadPathEnd) ||
+            (onEvilPath && evilDistance < evilPathEnd)
+          ) {
+            requestAnimationFrame(animate);
+          } else if (onEvilPath && evilDistance >= evilPathEnd) {
+            // Ensure death frame is set at the very end
+            renderCharacter(performance.now());
+            // Restart game after 2 seconds
+            setTimeout(() => {
+              // Reset all state variables
+              distance = 0;
+              evilDistance = 0;
+              onEvilPath = false;
+              wrongAnswered = false;
+              popupsEnabled = true;
+              checkpointIndex = 0;
+              frameIndex = 0;
+              requestAnimationFrame(animate);
+            }, 2000);
+          }
+          // If at end, do not call requestAnimationFrame again (animation stops)
+        }
+
+        requestAnimationFrame(animate);
+      }
     </script>
   </body>
   <script src="idle.js"></script>
