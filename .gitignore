@@ -1,0 +1,15 @@
+# Node modules
+node_modules/
+
+# Build output
+dist/
+release/
+out/
+
+# Electron cache
+.cache/
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db

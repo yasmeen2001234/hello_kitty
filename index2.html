@@ -9,12 +9,62 @@
     <title>Maze Game</title>
     <script src="questions.js"></script>
     <link rel="icon" type="image/png" href="/favicon.png" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/Draggable.min.js"></script>
-    <script src="eye_blink.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.1/dist/gsap.min.js"></script>
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
+    <!-- Loading Screen Overlay -->
+    <div
+      id="loading-overlay"
+      style="
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: #fff8fc;
+        z-index: 9999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+      "
+    >
+      <div
+        style="
+          font-size: 2rem;
+          color: #b01455;
+          font-family: &quot;Comic Sans MS&quot;, cursive;
+          margin-bottom: 1.5rem;
+        "
+      >
+        Loading...
+      </div>
+      <div id="loading-progress" style="font-size: 1.2rem; color: #b01455">
+        0%
+      </div>
+      <div style="margin-top: 1.5rem">
+        <img
+          src="Images/Animation/walk1.png"
+          alt="Loading Kitty"
+          style="width: 80px; animation: spin 1.2s linear infinite"
+        />
+      </div>
+    </div>
+    <style>
+      @keyframes spin {
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+      #loading-overlay {
+        transition: opacity 0.5s;
+      }
+      #loading-overlay.hide {
+        opacity: 0;
+        pointer-events: none;
+      }
+    </style>
     <!-- PASTE YOUR ENTIRE road.svg CONTENT BELOW -->
     <div
       id="svg-container"
@@ -154,8 +204,63 @@
         </foreignObject>
       </svg>
     </div>
-
+    <script src="eye_blink.js"></script>
     <script>
+      // --- Loading Screen Logic ---
+      const imageSources = [
+        // Walk frames
+        "Images/Animation/walk1.png",
+        "Images/Animation/walk2.png",
+        "Images/Animation/walk3.png",
+        // Idle frames (kuromi)
+        "Images/Animation/kuromi1.png",
+        "Images/Animation/kuromi2.png",
+        "Images/Animation/kuromi3.png",
+        // Idle frames (boy)
+        "Images/Animation/Boy1.png",
+        "Images/Animation/Boy2.png",
+        "Images/Animation/Boy3.png",
+        // Other frames
+        "Images/Animation/death.png",
+        "Images/Animation/kiss.png",
+        "Images/Animation/kiss_boy.png",
+        // Maze/road SVG
+        "Images/Maze/road3.svg",
+      ];
+      let loadedCount = 0;
+      const loadingOverlay = document.getElementById("loading-overlay");
+      const loadingProgress = document.getElementById("loading-progress");
+      function updateProgress() {
+        const percent = Math.round((loadedCount / imageSources.length) * 100);
+        loadingProgress.textContent = percent + "%";
+      }
+      function preloadImages(sources, allDone) {
+        if (!sources.length) return allDone();
+        sources.forEach((src) => {
+          const img = new window.Image();
+          img.onload = img.onerror = () => {
+            loadedCount++;
+            updateProgress();
+            if (loadedCount === sources.length) {
+              setTimeout(allDone, 300); // slight delay for smoothness
+            }
+          };
+          img.src = src;
+        });
+      }
+      // Prevent animation/game from starting until images are loaded
+      window.__allImagesLoaded = false;
+      function startGameAfterLoading() {
+        loadingOverlay.classList.add("hide");
+        setTimeout(() => {
+          loadingOverlay.style.display = "none";
+          window.__allImagesLoaded = true;
+          // If the game has a start function, call it here if needed
+          if (typeof window.startGame === "function") window.startGame();
+        }, 500);
+      }
+      preloadImages(imageSources, startGameAfterLoading);
+      // --- End Loading Screen Logic ---
       // Responsive resize for SVG
       function resizeSVG() {
         const svg = document.getElementById("game");
@@ -175,6 +280,17 @@
       const path = document.getElementById("roadPath");
       const evilPath = document.getElementById("evilPath");
       const character = document.getElementById("character");
+
+      // --- Wait for images to load before starting animation ---
+      function waitForImagesThenStart() {
+        if (window.__allImagesLoaded) {
+          requestAnimationFrame(animate);
+        } else {
+          setTimeout(waitForImagesThenStart, 50);
+        }
+      }
+      // Replace the initial call to requestAnimationFrame(animate) with:
+      waitForImagesThenStart();
       let popupsEnabled = true;
       let wrongAnswered = false;
       const roadPathEnd = 575;

@@ -1,5 +1,13 @@
 function blink() {
-  gsap.to(".iris", {
+  const iris = document.querySelectorAll(".iris");
+
+  if (!iris) {
+    console.warn(".iris not found — retrying...");
+    setTimeout(blink, 100);
+    return;
+  }
+
+  gsap.to(iris, {
     duration: 0.1,
     scaleY: 0,
     transformOrigin: "center bottom",
@@ -10,8 +18,9 @@ function blink() {
     },
   });
 }
+
 blink();
 
-let draggable = Draggable.create(".drag", {
+Draggable.create(".drag", {
   type: "x,y",
-}); //draggable plugin code
+});
