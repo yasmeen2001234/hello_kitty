@@ -8,20 +8,23 @@
 
 
     <div class="piano-container">
-        <div class="keyboard">
-            <div class="key white" onclick="playNote(261.63)"></div> 
-            <div class="key white" onclick="playNote(293.66)"></div> 
-            <div class="key white" onclick="playNote(329.63)"></div> 
-            <div class="key white" onclick="playNote(349.23)"></div> 
-            <div class="key white" onclick="playNote(392.00)"></div> 
-            <div class="key white" onclick="playNote(440.00)"></div> 
+        <div class="piano-stage">
+            <img id="boy1" src="Images/Animation/walk1.png" alt="Walking character">
+            <div class="keyboard">
+                <div class="key white" onclick="playNote(261.63)"></div> 
+                <div class="key white" onclick="playNote(293.66)"></div> 
+                <div class="key white" onclick="playNote(329.63)"></div> 
+                <div class="key white" onclick="playNote(349.23)"></div> 
+                <div class="key white" onclick="playNote(392.00)"></div> 
+                <div class="key white" onclick="playNote(440.00)"></div> 
 
-            <div id="b1" class="key black" onclick="playNote(277.18)"></div> 
-            <div id="b2" class="key black" onclick="playNote(311.13)"></div> 
-            <div id="b3" class="key black" onclick="playNote(369.99)"></div> 
-            <div id="b4" class="key black" onclick="playNote(415.30)"></div> 
+                <div id="b1" class="key black" onclick="playNote(277.18)"></div> 
+                <div id="b2" class="key black" onclick="playNote(311.13)"></div> 
+                <div id="b3" class="key black" onclick="playNote(369.99)"></div> 
+                <div id="b4" class="key black" onclick="playNote(415.30)"></div> 
+            </div>
         </div>
-         </div>
+    </div>
 
             <div class="controls">
         <div class="control-group">
@@ -42,6 +45,87 @@
 
     <script>
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const stage = document.querySelector('.piano-stage');
+        const keyboard = document.querySelector('.keyboard');
+        const boy = document.getElementById('boy1');
+        let currentBoyX = 0;
+        let currentBoyY = 0;
+        let facing = 1;
+        let currentKey = null;
+
+        function getBoyTransform(x, y = 0, direction = facing) {
+            return `translate(${x}px, ${y}px) scaleX(${direction})`;
+        }
+
+        function getKeyX(key) {
+            const keyboardRect = keyboard.getBoundingClientRect();
+            const keyRect = key.getBoundingClientRect();
+            return keyRect.left - keyboardRect.left + (keyRect.width / 2) - (boy.offsetWidth / 2);
+        }
+
+        function getKeyY(key) {
+            const stageRect = stage.getBoundingClientRect();
+            const keyRect = key.getBoundingClientRect();
+            const keyTopFromStageBottom = stageRect.bottom - keyRect.top;
+            const footOffset = key.classList.contains('black') ? 100 : 180;
+            return -keyTopFromStageBottom + footOffset;
+        }
+
+        function placeBoyOnKey(key) {
+            currentBoyX = getKeyX(key);
+            currentBoyY = getKeyY(key);
+            boy.style.transform = getBoyTransform(currentBoyX, currentBoyY);
+            currentKey = key;
+        }
+
+        function jumpBoyToKey(key) {
+            const targetX = getKeyX(key);
+            const targetY = getKeyY(key);
+            const peakX = (currentBoyX + targetX) / 2;
+            const jumpHeight = 58;
+            const peakY = Math.min(currentBoyY, targetY) - jumpHeight;
+            const jumpDuration = 320;
+            const direction = targetX > currentBoyX ? 1 : targetX < currentBoyX ? -1 : facing;
+
+            facing = direction;
+
+            boy.classList.add('jumping');
+            boy.animate(
+                [
+                    { transform: getBoyTransform(currentBoyX, currentBoyY, direction) },
+                    { transform: getBoyTransform(peakX, peakY, direction) },
+                    { transform: getBoyTransform(targetX, targetY, direction) }
+                ],
+                { duration: jumpDuration, easing: 'ease-out' }
+            );
+
+            currentBoyX = targetX;
+            currentBoyY = targetY;
+            boy.style.transform = getBoyTransform(currentBoyX, currentBoyY, direction);
+            currentKey = key;
+
+            setTimeout(() => {
+                boy.classList.remove('jumping');
+            }, jumpDuration);
+        }
+
+        function initBoyPosition() {
+            const firstKey = document.querySelector('.key.white');
+            if (!currentKey && firstKey) {
+                placeBoyOnKey(firstKey);
+                return;
+            }
+            if (currentKey) {
+                placeBoyOnKey(currentKey);
+            }
+        }
+
+        document.querySelectorAll('.key').forEach((key) => {
+            key.addEventListener('click', () => jumpBoyToKey(key));
+        });
+
+        window.addEventListener('load', initBoyPosition);
+        window.addEventListener('resize', initBoyPosition);
 
         function playNote(freq) {
             if (audioCtx.state === 'suspended') audioCtx.resume();
