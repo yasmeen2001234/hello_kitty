@@ -1,4 +1,5 @@
-      body { background: #fdf2f2; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; margin: 0; font-family: 'Segoe UI', sans-serif; }
+      body {  background: #ee9ca7;
+  background: linear-gradient(to bottom, #ee9ca7, #ffdde1); display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; margin: 0; font-family: 'Segoe UI', sans-serif; }
 
         .piano-stage {
             position: relative;
