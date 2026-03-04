@@ -1,0 +1,69 @@
+      body { background: #fdf2f2; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; margin: 0; font-family: 'Segoe UI', sans-serif; }
+
+        .piano-stage {
+            position: relative;
+            width: 420px;
+            height: 320px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            
+        }
+
+        #boy1 {
+            position: absolute;
+            width: 58px;
+            height: 58px;
+            object-fit: contain;
+            transform: translate(0, 0);
+            z-index: 40;
+            pointer-events: none;
+            transition: filter 0.12s ease;
+        }
+
+        #boy1.jumping {
+            filter: drop-shadow(0 8px 8px rgba(0, 0, 0, 0.18));
+        }
+        
+        .controls { 
+            margin-top: 80px; 
+            background: white; 
+            padding: 20px; 
+            border-radius: 20px; 
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .control-group { display: flex; flex-direction: column; gap: 5px; }
+        label { font-size: 12px; font-weight: bold; color: #d63384; text-transform: uppercase; }
+        
+        select, input { padding: 8px; border-radius: 8px; border: 1px solid #ffb6c1; outline: none; }
+
+        .piano-container { perspective: 1200px; }
+        .keyboard { display: flex; transform: rotateX(20deg); position: relative; }
+        
+        /* 3D Keys based on your reference image */
+        .key.white { 
+            position: relative; width: 70px; height: 220px; 
+            background: linear-gradient(to bottom, #fff 0%, #f0f0f0 100%); 
+            border: 1px solid #ccc; border-radius: 0 0 8px 8px; cursor: pointer; 
+            box-shadow: 0 10px 0 #d1d1d1, 0 12px 5px rgba(0,0,0,0.1); 
+            transition: all 0.1s; 
+        }
+        .key.white:active { transform: translateY(6px); box-shadow: 0 4px 0 #d1d1d1, 0 5px 2px rgba(0,0,0,0.1); background: #e9e9e9; }
+        .key.white.active { transform: translateY(6px); box-shadow: 0 4px 0 #d1d1d1, 0 5px 2px rgba(0,0,0,0.1); background: #e9e9e9; }
+        
+        .key.black { 
+            position: absolute; width: 42px; height: 130px; 
+            background: linear-gradient(to bottom, #444 0%, #000 100%); 
+            z-index: 10; border-radius: 0 0 5px 5px; 
+            box-shadow: 0 6px 0 #222, 2px 8px 10px rgba(0,0,0,0.3); 
+            transition: all 0.1s; cursor: pointer; 
+        }
+        .key.black:active { transform: translateY(4px); box-shadow: 0 2px 0 #222, 2px 4px 5px rgba(0,0,0,0.3); }
+        .key.black.active { transform: translateY(4px); box-shadow: 0 2px 0 #222, 2px 4px 5px rgba(0,0,0,0.3); }
+
+        /* Positioning logic for 6 White / 4 Black */
+        #b1 { left: 49px; } #b2 { left: 121px; } #b3 { left: 263px; } #b4 { left: 334px; }

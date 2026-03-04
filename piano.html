@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="piano.css" />
+</head>
+<body>
+
+
+    <div class="piano-container">
+        <div class="keyboard">
+            <div class="key white" onclick="playNote(261.63)"></div> 
+            <div class="key white" onclick="playNote(293.66)"></div> 
+            <div class="key white" onclick="playNote(329.63)"></div> 
+            <div class="key white" onclick="playNote(349.23)"></div> 
+            <div class="key white" onclick="playNote(392.00)"></div> 
+            <div class="key white" onclick="playNote(440.00)"></div> 
+
+            <div id="b1" class="key black" onclick="playNote(277.18)"></div> 
+            <div id="b2" class="key black" onclick="playNote(311.13)"></div> 
+            <div id="b3" class="key black" onclick="playNote(369.99)"></div> 
+            <div id="b4" class="key black" onclick="playNote(415.30)"></div> 
+        </div>
+         </div>
+
+            <div class="controls">
+        <div class="control-group">
+            <label>Instrument</label>
+            <select id="soundType">
+                 <option value="sine">Soft Flute</option>
+                <option value="triangle">Toy Piano</option>
+                <option value="square">8-Bit Retro</option>
+                <option value="sawtooth">Power Synth</option>
+            </select>
+        </div>
+
+
+        <div class="control-group">
+            <label>Decay (Fade Length)</label>
+            <input type="range" id="decayTime" min="0.1" max="3.0" step="0.1" value="1.2">
+        </div>
+
+    <script>
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playNote(freq) {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            
+            const selectedSound = document.getElementById('soundType').value;
+            const decayValue = parseFloat(document.getElementById('decayTime').value);
+            
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+
+            osc.type = selectedSound; 
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+
+            // Volume Control
+            const volume = (selectedSound === 'square' || selectedSound === 'sawtooth') ? 0.1 : 0.4;
+            
+            // --- THE DECAY LOGIC ---
+            // Start at 0, instantly jump to volume (Attack)
+            gain.gain.setValueAtTime(0, audioCtx.currentTime);
+            gain.gain.linearRampToValueAtTime(volume, audioCtx.currentTime + 0.02);
+            
+            // Fade out exponentially over the Decay time
+            gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + decayValue);
+
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            
+            osc.start();
+            osc.stop(audioCtx.currentTime + decayValue);
+        }
+    </script>
+</body>
+</html>
