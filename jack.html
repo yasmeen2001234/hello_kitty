@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jack in the Box</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #1a0533;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    font-family: 'Fredoka One', cursive;
+    overflow: hidden;
+  }
+
+  /* Stars background */
+  .stars {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .star {
+    position: absolute;
+    background: white;
+    border-radius: 50%;
+    animation: twinkle 2s infinite alternate;
+  }
+
+  @keyframes twinkle {
+    from { opacity: 0.2; transform: scale(1); }
+    to   { opacity: 1;   transform: scale(1.4); }
+  }
+
+  .scene {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+
+  /* Title */
+  .title {
+    font-size: 2.8rem;
+    color: #ffe94e;
+    text-shadow: 3px 3px 0 #e05c00, 6px 6px 0 rgba(0,0,0,0.3);
+    letter-spacing: 2px;
+    animation: titleBounce 3s ease-in-out infinite;
+  }
+  @keyframes titleBounce {
+    0%,100% { transform: translateY(0) rotate(-1deg); }
+    50%      { transform: translateY(-8px) rotate(1deg); }
+  }
+
+  /* Box container */
+  .box-wrapper {
+    position: relative;
+    width: 280px;
+    height: 380px;
+  }
+
+  /* Jack (the clown) */
+  .jack {
+    position: absolute;
+    bottom: 200px;
+    left: 50%;
+    transform: translateX(-50%) scaleY(0);
+    transform-origin: bottom center;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: none;
+  }
+  .jack.popping {
+    animation: jackPop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  }
+  .jack.hiding {
+    animation: jackHide 0.4s ease-in forwards;
+  }
+  @keyframes jackPop {
+    from { transform: translateX(-50%) scaleY(0) rotate(-10deg); }
+    to   { transform: translateX(-50%) scaleY(1) rotate(0deg); }
+  }
+  @keyframes jackHide {
+    from { transform: translateX(-50%) scaleY(1); }
+    to   { transform: translateX(-50%) scaleY(0); }
+  }
+
+  /* Spring/neck */
+  .spring {
+    width: 18px;
+    height: 90px;
+    background: repeating-linear-gradient(
+      to bottom,
+      #ff6b35 0px, #ff6b35 6px,
+      #ffcc00 6px, #ffcc00 12px
+    );
+    border-radius: 9px;
+    position: relative;
+    animation: none;
+  }
+  .jack.popping .spring {
+    animation: springWobble 0.6s ease-out 0.4s;
+  }
+  @keyframes springWobble {
+    0%,100% { transform: scaleX(1); }
+    25%      { transform: scaleX(1.3); }
+    50%      { transform: scaleX(0.8); }
+    75%      { transform: scaleX(1.2); }
+  }
+
+  /* Head */
+  .head {
+    width: 90px;
+    height: 90px;
+    background: radial-gradient(circle at 40% 35%, #ffdfb0, #f5a623);
+    border-radius: 50%;
+    position: relative;
+    border: 4px solid #e08a00;
+    box-shadow: 4px 4px 0 rgba(0,0,0,0.25);
+    animation: none;
+  }
+  .jack.popping .head {
+    animation: headWiggle 0.8s ease-out 0.5s;
+  }
+  @keyframes headWiggle {
+    0%,100% { transform: rotate(0); }
+    20%  { transform: rotate(-15deg); }
+    40%  { transform: rotate(12deg); }
+    60%  { transform: rotate(-8deg); }
+    80%  { transform: rotate(5deg); }
+  }
+
+  /* Hat */
+  .hat {
+    position: absolute;
+    top: -32px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  .hat-brim {
+    width: 100px;
+    height: 14px;
+    background: #cc0033;
+    border-radius: 6px;
+    position: relative;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    box-shadow: 2px 2px 0 #880022;
+  }
+  .hat-top {
+    width: 60px;
+    height: 36px;
+    background: #cc0033;
+    border-radius: 6px 6px 0 0;
+    margin: 0 auto;
+    position: relative;
+    top: -12px;
+    box-shadow: 2px 2px 0 #880022;
+  }
+  .hat-star {
+    position: absolute;
+    top: 4px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 18px;
+  }
+
+  /* Eyes */
+  .eyes { position: absolute; top: 28px; width: 100%; display: flex; justify-content: space-around; padding: 0 16px; }
+  .eye {
+    width: 18px; height: 22px;
+    background: white;
+    border-radius: 50%;
+    border: 3px solid #333;
+    position: relative;
+    overflow: hidden;
+  }
+  .pupil {
+    width: 8px; height: 10px;
+    background: #1a1a2e;
+    border-radius: 50%;
+    position: absolute;
+    top: 4px; left: 4px;
+    animation: eyeRoll 4s infinite;
+  }
+  @keyframes eyeRoll {
+    0%,80%,100% { transform: translate(0,0); }
+    85%          { transform: translate(2px,-2px); }
+    90%          { transform: translate(-2px,2px); }
+    95%          { transform: translate(2px,2px); }
+  }
+  .eye-shine {
+    width: 5px; height: 5px;
+    background: white;
+    border-radius: 50%;
+    position: absolute;
+    top: 2px; left: 1px;
+    z-index: 2;
+  }
+
+  /* Nose */
+  .nose {
+    position: absolute;
+    top: 48px; left: 50%;
+    transform: translateX(-50%);
+    width: 20px; height: 18px;
+    background: radial-gradient(circle at 40% 40%, #ff8888, #ff1a1a);
+    border-radius: 50%;
+    border: 2px solid #cc0000;
+    animation: nosePulse 1.5s ease-in-out infinite;
+  }
+  @keyframes nosePulse {
+    0%,100% { transform: translateX(-50%) scale(1); }
+    50%      { transform: translateX(-50%) scale(1.15); }
+  }
+
+  /* Mouth */
+  .mouth {
+    position: absolute;
+    bottom: 14px; left: 50%;
+    transform: translateX(-50%);
+    width: 48px; height: 24px;
+    border-bottom: 5px solid #cc3300;
+    border-left: 3px solid transparent;
+    border-right: 3px solid transparent;
+    border-radius: 0 0 24px 24px;
+    background: #ff4422;
+    overflow: hidden;
+  }
+  .teeth {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 10px;
+    background: white;
+    border-bottom: 2px solid #ddd;
+    display: flex;
+    justify-content: space-around;
+    padding: 0 2px;
+  }
+  .tooth {
+    width: 8px;
+    height: 10px;
+    border: 1px solid #ccc;
+  }
+
+  /* Collar / ruffle */
+  .collar {
+    width: 100px;
+    height: 28px;
+    background: radial-gradient(ellipse, #ffe94e 30%, #ffcc00 100%);
+    border-radius: 50% 50% 0 0 / 60% 60% 0 0;
+    margin-top: -6px;
+    border: 3px solid #e6b800;
+    position: relative;
+    overflow: hidden;
+  }
+  .collar::before, .collar::after {
+    content: '';
+    position: absolute;
+    top: 0; bottom: 0;
+    width: 6px;
+    background: #e6b800;
+    border-radius: 3px;
+  }
+  .collar::before { left: 20px; }
+  .collar::after  { right: 20px; }
+
+  /* BOX */
+  .box {
+    position: absolute;
+    bottom: 0;
+    left: 0; right: 0;
+    height: 220px;
+    z-index: 5;
+  }
+
+  /* Box lid */
+  .lid {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 30px;
+    background: linear-gradient(135deg, #e63946, #c1121f);
+    border-radius: 8px 8px 0 0;
+    border: 3px solid #9b0f1a;
+    transform-origin: top center;
+    transition: transform 0.5s cubic-bezier(0.34, 1.3, 0.64, 1);
+    z-index: 6;
+  }
+  .lid.open {
+    transform: rotateX(120deg) translateY(-10px);
+  }
+  .lid-stripe {
+    position: absolute;
+    top: 0; bottom: 0;
+    width: 14px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 3px;
+  }
+  .lid-stripe:nth-child(1) { left: 20px; }
+  .lid-stripe:nth-child(2) { left: 50%; transform: translateX(-50%); }
+  .lid-stripe:nth-child(3) { right: 20px; }
+
+  /* Box body */
+  .box-body {
+    position: absolute;
+    top: 30px; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(160deg, #ff6b35, #e84118);
+    border: 4px solid #9b0f1a;
+    border-top: none;
+    border-radius: 0 0 12px 12px;
+    overflow: hidden;
+  }
+
+  /* Checkerboard pattern */
+  .box-body::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      repeating-conic-gradient(rgba(255,255,255,0.08) 0% 25%, transparent 0% 50%);
+    background-size: 28px 28px;
+  }
+
+  /* Box face decoration */
+  .box-face {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 3rem;
+    opacity: 0.18;
+    user-select: none;
+  }
+
+  /* Box label */
+  .box-label {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #ffe94e;
+    color: #9b0f1a;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1rem;
+    padding: 4px 14px;
+    border-radius: 20px;
+    border: 3px solid #e6b800;
+    white-space: nowrap;
+    letter-spacing: 1px;
+    box-shadow: 2px 2px 0 rgba(0,0,0,0.2);
+  }
+
+  /* Crank handle */
+  .crank-wrapper {
+    position: absolute;
+    right: -44px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  .crank-arm {
+    width: 36px;
+    height: 10px;
+    background: linear-gradient(to bottom, #aaa, #666);
+    border-radius: 5px;
+    transform-origin: left center;
+    position: relative;
+    animation: crankSpin 2s linear infinite;
+    animation-play-state: paused;
+  }
+  .crank-arm.spinning {
+    animation-play-state: running;
+  }
+  @keyframes crankSpin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+  }
+  .crank-knob {
+    width: 18px;
+    height: 18px;
+    background: radial-gradient(circle at 40% 35%, #ffcc00, #e6a800);
+    border-radius: 50%;
+    border: 3px solid #b38000;
+    position: absolute;
+    right: -9px;
+    top: 50%;
+    transform: translateY(-50%);
+    box-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+  }
+  .crank-shaft {
+    width: 10px;
+    height: 40px;
+    background: linear-gradient(to right, #999, #555);
+    border-radius: 5px;
+    position: absolute;
+    left: -5px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  /* Bottom legs */
+  .box-legs {
+    position: absolute;
+    bottom: -18px;
+    left: 0; right: 0;
+    display: flex;
+    justify-content: space-around;
+    padding: 0 20px;
+    z-index: 4;
+  }
+  .leg {
+    width: 22px;
+    height: 22px;
+    background: linear-gradient(135deg, #aaa, #555);
+    border-radius: 4px 4px 6px 6px;
+    box-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+  }
+
+  /* Control button */
+  .btn {
+    margin-top: 30px;
+    background: linear-gradient(135deg, #ffe94e, #ffcc00);
+    color: #9b0f1a;
+    border: 4px solid #e6b800;
+    border-radius: 50px;
+    padding: 14px 40px;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.4rem;
+    cursor: pointer;
+    box-shadow: 0 6px 0 #b38000, 0 8px 16px rgba(0,0,0,0.3);
+    transition: transform 0.1s, box-shadow 0.1s;
+    letter-spacing: 1px;
+    position: relative;
+    z-index: 10;
+  }
+  .btn:hover { transform: translateY(-3px); box-shadow: 0 9px 0 #b38000, 0 12px 20px rgba(0,0,0,0.3); }
+  .btn:active { transform: translateY(3px); box-shadow: 0 3px 0 #b38000, 0 4px 8px rgba(0,0,0,0.3); }
+
+  /* Confetti */
+  .confetti-container {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 100;
+  }
+  .confetti-piece {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    opacity: 0;
+  }
+
+  /* Musical notes */
+  .note {
+    position: absolute;
+    font-size: 1.4rem;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 20;
+    animation: none;
+  }
+  .note.floating {
+    animation: floatNote 1.5s ease-out forwards;
+  }
+  @keyframes floatNote {
+    0%   { opacity: 1; transform: translate(0, 0) scale(1); }
+    100% { opacity: 0; transform: translate(var(--nx), var(--ny)) scale(0.5) rotate(var(--nr)); }
+  }
+
+  /* Screen shake */
+  @keyframes shake {
+    0%,100% { transform: translate(0,0) rotate(0deg); }
+    20%      { transform: translate(-6px, 3px) rotate(-2deg); }
+    40%      { transform: translate(6px, -3px) rotate(2deg); }
+    60%      { transform: translate(-4px, 4px) rotate(-1deg); }
+    80%      { transform: translate(4px, -4px) rotate(1deg); }
+  }
+  .shaking {
+    animation: shake 0.5s ease-out;
+  }
+
+  .subtitle {
+    color: #ffb3c6;
+    font-family: 'Nunito', sans-serif;
+    font-size: 1rem;
+    margin-top: 8px;
+    opacity: 0.8;
+  }
+</style>
+</head>
+<body>
+
+<div class="stars" id="stars"></div>
+
+<div class="scene" id="scene">
+  <div class="title">🎪 JACK IN THE BOX</div>
+
+  <div class="box-wrapper" id="boxWrapper">
+
+    <!-- Jack (clown) -->
+    <div class="jack" id="jack">
+      <div class="head">
+        <div class="hat">
+          <div class="hat-top"><span class="hat-star">⭐</span></div>
+          <div class="hat-brim"></div>
+        </div>
+        <div class="eyes">
+          <div class="eye"><div class="pupil"></div><div class="eye-shine"></div></div>
+          <div class="eye"><div class="pupil"></div><div class="eye-shine"></div></div>
+        </div>
+        <div class="nose"></div>
+        <div class="mouth">
+          <div class="teeth">
+            <div class="tooth"></div>
+            <div class="tooth"></div>
+            <div class="tooth"></div>
+          </div>
+        </div>
+      </div>
+      <div class="spring"></div>
+      <div class="collar"></div>
+    </div>
+
+    <!-- Box lid -->
+    <div class="lid" id="lid">
+      <div class="lid-stripe"></div>
+      <div class="lid-stripe"></div>
+      <div class="lid-stripe"></div>
+    </div>
+
+    <!-- Box body -->
+    <div class="box-body">
+      <div class="box-face">🃏</div>
+      <div class="box-label">SURPRISE!</div>
+    </div>
+
+    <!-- Crank -->
+    <div class="crank-wrapper">
+      <div class="crank-shaft"></div>
+      <div class="crank-arm" id="crankArm">
+        <div class="crank-knob"></div>
+      </div>
+    </div>
+
+    <!-- Legs -->
+    <div class="box-legs">
+      <div class="leg"></div>
+      <div class="leg"></div>
+      <div class="leg"></div>
+    </div>
+
+  </div>
+
+  <button class="btn" id="btn" onclick="triggerJack()">🎵 Turn the Crank!</button>
+  <div class="subtitle" id="subtitle">Click the button to crank it up!</div>
+</div>
+
+<div class="confetti-container" id="confetti"></div>
+
+<script>
+  // Generate stars
+  const starsEl = document.getElementById('stars');
+  for (let i = 0; i < 80; i++) {
+    const s = document.createElement('div');
+    s.className = 'star';
+    const size = Math.random() * 3 + 1;
+    s.style.cssText = `
+      width:${size}px; height:${size}px;
+      top:${Math.random()*100}%; left:${Math.random()*100}%;
+      animation-delay:${Math.random()*3}s;
+      animation-duration:${1.5 + Math.random()*2}s;
+    `;
+    starsEl.appendChild(s);
+  }
+
+  let jackOut = false;
+  let busy = false;
+
+  const jack = document.getElementById('jack');
+  const lid  = document.getElementById('lid');
+  const btn  = document.getElementById('btn');
+  const crank = document.getElementById('crankArm');
+  const subtitle = document.getElementById('subtitle');
+  const scene = document.getElementById('scene');
+  const boxWrapper = document.getElementById('boxWrapper');
+
+  const NOTES = ['🎵','🎶','🎸','🎺','🎻','🥁'];
+  const MESSAGES_OPEN  = ['BOO! 👻','TA-DA! 🎉','SURPRISE! 🎊','HELLO! 👋','WAHOO! 🎈'];
+  const MESSAGES_CLOSE = ['Turn the crank!','Wind it up!','Keep going...','Almost there...','Try again!'];
+
+  function triggerJack() {
+    if (busy) return;
+    busy = true;
+
+    if (!jackOut) {
+      // Crank spinning
+      crank.classList.add('spinning');
+      subtitle.textContent = '🎵 Winding up...';
+      btn.disabled = true;
+
+      // Play crank phase then pop
+      let crankTime = 1400 + Math.random() * 600;
+      setTimeout(() => {
+        crank.classList.remove('spinning');
+        popJack();
+      }, crankTime);
+
+    } else {
+      hideJack();
+    }
+  }
+
+  function popJack() {
+    jackOut = true;
+
+    // Shake box
+    boxWrapper.classList.add('shaking');
+    setTimeout(() => boxWrapper.classList.remove('shaking'), 500);
+
+    // Open lid + pop jack
+    setTimeout(() => {
+      lid.classList.add('open');
+      jack.classList.remove('hiding');
+      jack.style.transform = '';
+      jack.classList.add('popping');
+
+      spawnConfetti();
+      spawnNotes();
+
+      const msg = MESSAGES_OPEN[Math.floor(Math.random() * MESSAGES_OPEN.length)];
+      subtitle.textContent = msg;
+      btn.textContent = '📦 Put Jack Back!';
+      btn.disabled = false;
+      busy = false;
+    }, 300);
+  }
+
+  function hideJack() {
+    jack.classList.remove('popping');
+    jack.classList.add('hiding');
+
+    setTimeout(() => {
+      lid.classList.remove('open');
+      jack.classList.remove('hiding');
+      jack.style.transform = 'translateX(-50%) scaleY(0)';
+      jackOut = false;
+
+      const msg = MESSAGES_CLOSE[Math.floor(Math.random() * MESSAGES_CLOSE.length)];
+      subtitle.textContent = msg;
+      btn.textContent = '🎵 Turn the Crank!';
+      btn.disabled = false;
+      busy = false;
+    }, 400);
+  }
+
+  function spawnConfetti() {
+    const container = document.getElementById('confetti');
+    const colors = ['#ffe94e','#ff6b35','#e63946','#06d6a0','#118ab2','#ffd166','#ef476f'];
+    const shapes = ['border-radius:50%','border-radius:2px','transform:rotate(45deg)'];
+
+    for (let i = 0; i < 60; i++) {
+      const c = document.createElement('div');
+      c.className = 'confetti-piece';
+      const x = 30 + Math.random() * 40; // center area
+      c.style.cssText = `
+        left:${x}%;
+        top:40%;
+        background:${colors[Math.floor(Math.random()*colors.length)]};
+        width:${6+Math.random()*10}px;
+        height:${6+Math.random()*10}px;
+        ${shapes[Math.floor(Math.random()*shapes.length)]};
+        animation: confettiFall${Math.floor(Math.random()*3)} ${1+Math.random()*1.5}s ease-out ${Math.random()*0.4}s forwards;
+      `;
+      container.appendChild(c);
+      setTimeout(() => c.remove(), 2500);
+    }
+
+    // Inject confetti keyframes dynamically
+    if (!document.getElementById('confettiKF')) {
+      const style = document.createElement('style');
+      style.id = 'confettiKF';
+      style.textContent = `
+        @keyframes confettiFall0 {
+          0%   { opacity:1; transform: translate(0,0) rotate(0deg); }
+          100% { opacity:0; transform: translate(${rand(-200,200)}px, ${rand(100,300)}px) rotate(${rand(-360,360)}deg); }
+        }
+        @keyframes confettiFall1 {
+          0%   { opacity:1; transform: translate(0,0) rotate(0deg); }
+          100% { opacity:0; transform: translate(${rand(-150,150)}px, ${rand(150,400)}px) rotate(${rand(-360,360)}deg); }
+        }
+        @keyframes confettiFall2 {
+          0%   { opacity:1; transform: translate(0,0) rotate(0deg); }
+          100% { opacity:0; transform: translate(${rand(-250,250)}px, ${rand(80,350)}px) rotate(${rand(-360,360)}deg); }
+        }
+      `;
+      document.head.appendChild(style);
+    }
+  }
+
+  function spawnNotes() {
+    const rect = boxWrapper.getBoundingClientRect();
+    for (let i = 0; i < 6; i++) {
+      setTimeout(() => {
+        const note = document.createElement('div');
+        note.className = 'note';
+        note.textContent = NOTES[Math.floor(Math.random()*NOTES.length)];
+        const nx = (Math.random()-0.5)*160;
+        const ny = -(60 + Math.random()*100);
+        const nr = (Math.random()-0.5)*60;
+        note.style.cssText = `
+          left: ${rect.left + rect.width/2 + (Math.random()-0.5)*80}px;
+          top: ${rect.top + 80}px;
+          --nx: ${nx}px; --ny: ${ny}px; --nr: ${nr}deg;
+          position:fixed;
+        `;
+        document.body.appendChild(note);
+        note.classList.add('floating');
+        setTimeout(() => note.remove(), 1600);
+      }, i * 100);
+    }
+  }
+
+  function rand(a, b) { return Math.floor(Math.random() * (b-a) + a); }
+</script>
+</body>
+</html>

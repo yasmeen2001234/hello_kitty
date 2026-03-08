@@ -21,6 +21,3 @@ function blink() {
 
 blink();
 
-Draggable.create(".drag", {
-  type: "x,y",
-});

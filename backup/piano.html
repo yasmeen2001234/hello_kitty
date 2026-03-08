@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Piano</title>
+        <link rel="stylesheet" href="piano.css" />
+        <link rel="stylesheet" href="rainbow.css" />
+</head>
+<body>
+        <div
+            id="loading-overlay"
+            style="
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100vw;
+                height: 100vh;
+                background: 
+#ee9ca7;
+                z-index: 9999;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            "
+        >
+            <div
+                id="rainbow-stage"
+                style="
+                    width: 100vw;
+                    height: 100vh;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                "
+            >
+                <canvas id="rainbow" style="width: 100%; height: 100%"></canvas>
+                <img
+                    id="slide-overlay"
+                    src="Images/Animation/slide.png"
+                    alt="Sliding character"
+                />
+                <img
+                    id="slide-overlay-boy"
+                    src="Images/Animation/slide_boy.png"
+                    alt="Sliding boy"
+                />
+            </div>
+        </div>
+
+        <div id="piano-content" style="display: none;">
+            <div class="piano-container">
+                    <div class="piano-stage">
+                            <img id="boy1" src="Images/Animation/walk1.png" alt="Walking character">
+                            <div class="keyboard">
+                                    <div class="key white" onclick="playNote(261.63)"></div>
+                                    <div class="key white" onclick="playNote(293.66)"></div>
+                                    <div class="key white" onclick="playNote(329.63)"></div>
+                                    <div class="key white" onclick="playNote(349.23)"></div>
+                                    <div class="key white" onclick="playNote(392.00)"></div>
+                                    <div class="key white" onclick="playNote(440.00)"></div>
+
+                                    <div id="b1" class="key black" onclick="playNote(277.18)"></div>
+                                    <div id="b2" class="key black" onclick="playNote(311.13)"></div>
+                                    <div id="b3" class="key black" onclick="playNote(369.99)"></div>
+                                    <div id="b4" class="key black" onclick="playNote(415.30)"></div>
+                            </div>
+                    </div>
+            </div>
+
+            <div class="controls">
+                    <div class="control-group">
+                            <label>Instrument</label>
+                            <select id="soundType">
+                                     <option value="sine">Soft Flute</option>
+                                    <option value="triangle">Toy Piano</option>
+                                    <option value="square">8-Bit Retro</option>
+                                    <option value="sawtooth">Power Synth</option>
+                            </select>
+                    </div>
+
+                    <div class="control-group">
+                            <label>Decay (Fade Length)</label>
+                            <input type="range" id="decayTime" min="0.1" max="3.0" step="0.1" value="1.2">
+                    </div>
+        </div>
+    </div>
+
+        <script src="rainbow.js"></script>
+
+    <script>
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const stage = document.querySelector('.piano-stage');
+        const keyboard = document.querySelector('.keyboard');
+        const boy = document.getElementById('boy1');
+        let currentBoyX = 0;
+        let currentBoyY = 0;
+        let facing = 1;
+        let currentKey = null;
+
+        function getBoyTransform(x, y = 0, direction = facing) {
+            return `translate(${x}px, ${y}px) scaleX(${direction})`;
+        }
+
+        function getKeyX(key) {
+            const keyboardRect = keyboard.getBoundingClientRect();
+            const keyRect = key.getBoundingClientRect();
+            return keyRect.left - keyboardRect.left + (keyRect.width / 2) - (boy.offsetWidth / 2);
+        }
+
+        function getKeyY(key) {
+            const stageRect = stage.getBoundingClientRect();
+            const keyRect = key.getBoundingClientRect();
+            const keyTopFromStageBottom = stageRect.bottom - keyRect.top;
+            const footOffset = key.classList.contains('black') ? 100 : 180;
+            return -keyTopFromStageBottom + footOffset;
+        }
+
+        function placeBoyOnKey(key) {
+            currentBoyX = getKeyX(key);
+            currentBoyY = getKeyY(key);
+            boy.style.transform = getBoyTransform(currentBoyX, currentBoyY);
+            currentKey = key;
+        }
+
+        function jumpBoyToKey(key) {
+            const targetX = getKeyX(key);
+            const targetY = getKeyY(key);
+            const peakX = (currentBoyX + targetX) / 2;
+            const jumpHeight = 58;
+            const peakY = Math.min(currentBoyY, targetY) - jumpHeight;
+            const jumpDuration = 320;
+            const direction = targetX > currentBoyX ? 1 : targetX < currentBoyX ? -1 : facing;
+
+            facing = direction;
+
+            boy.classList.add('jumping');
+            boy.animate(
+                [
+                    { transform: getBoyTransform(currentBoyX, currentBoyY, direction) },
+                    { transform: getBoyTransform(peakX, peakY, direction) },
+                    { transform: getBoyTransform(targetX, targetY, direction) }
+                ],
+                { duration: jumpDuration, easing: 'ease-out' }
+            );
+
+            currentBoyX = targetX;
+            currentBoyY = targetY;
+            boy.style.transform = getBoyTransform(currentBoyX, currentBoyY, direction);
+            currentKey = key;
+
+            setTimeout(() => {
+                boy.classList.remove('jumping');
+            }, jumpDuration);
+        }
+
+        function initBoyPosition() {
+            const firstKey = document.querySelector('.key.white');
+            if (!currentKey && firstKey) {
+                placeBoyOnKey(firstKey);
+                return;
+            }
+            if (currentKey) {
+                placeBoyOnKey(currentKey);
+            }
+        }
+
+        document.querySelectorAll('.key').forEach((key) => {
+            key.addEventListener('click', () => jumpBoyToKey(key));
+        });
+        window.addEventListener('resize', initBoyPosition);
+
+        function showPianoAfterRainbow() {
+            const overlay = document.getElementById('loading-overlay');
+            const pianoContent = document.getElementById('piano-content');
+            if (overlay) {
+                overlay.style.display = 'none';
+            }
+            if (pianoContent) {
+                pianoContent.style.display = '';
+            }
+            requestAnimationFrame(initBoyPosition);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.__rainbowDone) {
+                showPianoAfterRainbow();
+                return;
+            }
+
+            window.addEventListener('rainbow:complete', showPianoAfterRainbow, {
+                once: true,
+            });
+        });
+
+        function playNote(freq) {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+
+            const selectedSound = document.getElementById('soundType').value;
+            const decayValue = parseFloat(document.getElementById('decayTime').value);
+
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+
+            osc.type = selectedSound; 
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+
+            // Volume Control
+            const volume = (selectedSound === 'square' || selectedSound === 'sawtooth') ? 0.1 : 0.4;
+
+            // --- THE DECAY LOGIC ---
+            // Start at 0, instantly jump to volume (Attack)
+            gain.gain.setValueAtTime(0, audioCtx.currentTime);
+            gain.gain.linearRampToValueAtTime(volume, audioCtx.currentTime + 0.02);
+
+            // Fade out exponentially over the Decay time
+            gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + decayValue);
+
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            osc.start();
+            osc.stop(audioCtx.currentTime + decayValue);
+        }
+    </script>
+</body>
+</html>
