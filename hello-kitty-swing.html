@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Hello Kitty Swing</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap');
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --pink: #f48fb1;
+      --pink-dark: #e91e8c;
+      --grass: #a5d6a7;
+      --grass-dark: #66bb6a;
+    }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: linear-gradient(180deg, #fce4ec 0%, #e1f5fe 45%, #e8f5e9 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* ── Clouds ── */
+    .cloud {
+      position: absolute;
+      background: white;
+      border-radius: 50px;
+      opacity: 0.82;
+      filter: drop-shadow(0 2px 6px rgba(200,180,220,0.18));
+    }
+    .cloud::before, .cloud::after { content:''; position:absolute; background:white; border-radius:50%; }
+    .cloud-1 { width:120px; height:38px; top:8%;  left:6%;  animation: floatCloud 18s linear infinite; }
+    .cloud-1::before { width:60px; height:60px; top:-28px; left:15px; }
+    .cloud-1::after  { width:45px; height:45px; top:-20px; left:50px; }
+    .cloud-2 { width:90px;  height:28px; top:14%; right:9%; animation: floatCloud 24s linear infinite reverse; }
+    .cloud-2::before { width:45px; height:45px; top:-22px; left:12px; }
+    .cloud-2::after  { width:35px; height:35px; top:-16px; left:38px; }
+    .cloud-3 { width:70px;  height:22px; top:5%;  left:44%; animation: floatCloud 30s linear infinite; opacity:0.55; }
+    .cloud-3::before { width:35px; height:35px; top:-18px; left:10px; }
+    .cloud-3::after  { width:25px; height:25px; top:-12px; left:30px; }
+    @keyframes floatCloud {
+      0%,100% { transform: translateX(0); }
+      50%      { transform: translateX(28px); }
+    }
+
+    /* ── Sparkles ── */
+    .sparkle {
+      position:absolute; width:10px; height:10px;
+      background: var(--pink);
+      clip-path: polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);
+      opacity:0; animation: twinkle 3s ease-in-out infinite;
+    }
+    .sparkle:nth-child(1){ top:12%; left:20%; width:14px; height:14px; animation-delay:0s; }
+    .sparkle:nth-child(2){ top:20%; right:22%; animation-delay:1s; background:#f8bbd0; }
+    .sparkle:nth-child(3){ top:35%; left:8%;  width:8px; height:8px; background:#80deea; animation-delay:2s; }
+    .sparkle:nth-child(4){ top:28%; right:8%; width:12px;height:12px;background:#fff176; animation-delay:0.5s; }
+    @keyframes twinkle {
+      0%,100%{ opacity:0; transform:scale(0.5) rotate(0deg); }
+      50%    { opacity:1; transform:scale(1.2) rotate(20deg); }
+    }
+
+    /* ── Title ── */
+    .title {
+      position:absolute; top:26px;
+      font-size:1.5rem; font-weight:900; color:var(--pink-dark);
+      letter-spacing:2px;
+      text-shadow: 0 2px 8px rgba(233,30,140,0.15);
+      -webkit-text-stroke: 1px #f48fb1;
+      z-index:10;
+    }
+
+    /* ── Floating hearts ── */
+    .heart {
+      position:absolute; font-size:1.4rem; opacity:0;
+      animation: floatHeart 3.5s ease-in-out infinite;
+      pointer-events:none;
+    }
+    .heart:nth-child(1){ left:38%; bottom:55%; animation-delay:0s; }
+    .heart:nth-child(2){ left:55%; bottom:60%; animation-delay:1.2s; font-size:1rem; }
+    .heart:nth-child(3){ left:30%; bottom:65%; animation-delay:2.2s; font-size:0.8rem; }
+    @keyframes floatHeart {
+      0%  { opacity:0; transform:translateY(0) scale(0.5); }
+      30% { opacity:1; }
+      100%{ opacity:0; transform:translateY(-60px) scale(1.1); }
+    }
+
+    /* ══════════════════════════════════
+       3-D SWING  –  forward / backward
+       ══════════════════════════════════ */
+
+    .stage {
+      perspective: 500px;
+      perspective-origin: 50% 0%;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 300px;
+    }
+
+    /* Fixed wooden beam */
+    .top-bar {
+      width: 200px; height: 16px;
+      background: linear-gradient(90deg, #a1887f, #bcaaa4, #a1887f);
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(120,80,60,0.2);
+      position: relative; z-index: 5;
+    }
+    .top-bar::before, .top-bar::after {
+      content:''; position:absolute; top:50%; transform:translateY(-50%);
+      width:12px; height:24px;
+      background: linear-gradient(180deg,#8d6e63,#a1887f);
+      border-radius:4px;
+    }
+    .top-bar::before{ left:22px; } .top-bar::after{ right:22px; }
+
+    /* Arm rotates in 3D on X axis — swings toward & away from viewer */
+    .arm {
+      transform-origin: top center;
+      transform-style: preserve-3d;
+      animation: swingFB 2.4s cubic-bezier(0.37,0,0.63,1) infinite;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /*
+      rotateX(+) = seat swings toward viewer (forward)
+      rotateX(-) = seat swings away from viewer (backward)
+    */
+    @keyframes swingFB {
+      0%   { transform: rotateX(40deg);  }
+      50%  { transform: rotateX(-40deg); }
+      100% { transform: rotateX(40deg);  }
+    }
+
+    /* Ropes */
+    .ropes {
+      display: flex; justify-content: space-between;
+      width: 120px;
+    }
+    .rope {
+      width: 4px; height: 175px;
+      background: linear-gradient(180deg, #ce93d8, #f48fb1, #ce93d8);
+      border-radius: 3px;
+    }
+
+    /* Seat */
+    .seat {
+      width: 140px; height: 20px;
+      background: linear-gradient(180deg, #f8bbd0, #f48fb1);
+      border-radius: 10px;
+      box-shadow: 0 4px 14px rgba(200,80,130,0.28), inset 0 2px 4px rgba(255,255,255,0.5);
+      border: 2.5px solid #e91e8c44;
+      margin-top: -2px;
+    }
+
+    /* Kitty: counter-tilt + scale to sell the depth */
+    .kitty-img {
+      width: 155px; height: 155px;
+      object-fit: contain;
+      filter: drop-shadow(0 8px 20px rgba(200,80,130,0.22));
+      transform-origin: bottom center;
+      animation: kittyBody 2.4s cubic-bezier(0.37,0,0.63,1) infinite;
+    }
+
+    @keyframes kittyBody {
+      /* forward  → bigger (closer) + slight backward body tilt */
+      0%   { transform: rotateX(-16deg) scale(1.15); }
+      /* backward → smaller (farther) + slight forward body tilt */
+      50%  { transform: rotateX( 16deg) scale(0.85); }
+      100% { transform: rotateX(-16deg) scale(1.15); }
+    }
+
+    /* Shadow: wide & dark when forward, narrow & faint when back */
+    .ground-shadow {
+      position: absolute;
+      bottom: -34px; left: 50%;
+      height: 16px; border-radius: 50%;
+      background: radial-gradient(ellipse, rgba(200,80,130,0.25) 60%, transparent 100%);
+      animation: shadowFB 2.4s cubic-bezier(0.37,0,0.63,1) infinite;
+    }
+    @keyframes shadowFB {
+      0%   { width:130px; opacity:0.6;  transform:translateX(-50%) scaleY(1.3); }
+      50%  { width: 55px; opacity:0.22; transform:translateX(-50%) scaleY(0.7); }
+      100% { width:130px; opacity:0.6;  transform:translateX(-50%) scaleY(1.3); }
+    }
+
+    /* ── Ground ── */
+    .ground {
+      position:absolute; bottom:0; left:0; right:0; height:90px;
+      background: linear-gradient(180deg, var(--grass) 0%, var(--grass-dark) 100%);
+      border-radius: 60% 60% 0 0 / 30% 30% 0 0;
+      z-index:0;
+    }
+    .ground::before {
+      content:''; position:absolute; top:0; left:0; right:0; height:18px;
+      background:var(--grass-dark);
+      border-radius: 60% 60% 0 0 / 60% 60% 0 0; opacity:0.38;
+    }
+
+    /* ── Flowers ── */
+    .flower { position:absolute; bottom:55px; z-index:1; }
+    .flower .stem  { width:3px; height:22px; background:#388e3c; border-radius:2px; margin:0 auto; }
+    .flower .bloom { width:18px; height:18px; border-radius:50%; background:var(--pink); border:3px solid white; box-shadow:0 0 0 2px var(--pink-dark); margin:0 auto -4px; }
+    .flower:nth-child(1){ left:28px; }  .flower:nth-child(1) .bloom{ background:#fff176; box-shadow:0 0 0 2px #f9a825; }
+    .flower:nth-child(2){ left:54px; }
+    .flower:nth-child(3){ right:33px; }
+    .flower:nth-child(4){ right:58px; } .flower:nth-child(4) .bloom{ background:#80deea; box-shadow:0 0 0 2px #00acc1; }
+  </style>
+</head>
+<body>
+
+  <div class="sparkle"></div>
+  <div class="sparkle"></div>
+  <div class="sparkle"></div>
+  <div class="sparkle"></div>
+
+  <div class="cloud cloud-1"></div>
+  <div class="cloud cloud-2"></div>
+  <div class="cloud cloud-3"></div>
+
+  <p class="title">☆ Hello Kitty ☆</p>
+
+  <div class="heart">💗</div>
+  <div class="heart">💕</div>
+  <div class="heart">🌸</div>
+
+  <!-- 3-D swing scene -->
+  <div class="stage">
+    <div class="top-bar"></div>
+
+    <div class="arm">
+      <div style="position:relative; display:flex; flex-direction:column; align-items:center;">
+        <div class="ropes">
+          <div class="rope"></div>
+          <div class="rope"></div>
+        </div>
+        <div style="position:relative; display:flex; flex-direction:column; align-items:center;">
+          <img
+            class="kitty-img"
+            src="/mnt/user-data/uploads/Gemini_Generated_Image_quwi32quwi32quwi.png"
+            alt="Hello Kitty on swing"
+          />
+          <div class="seat"></div>
+        </div>
+        <div class="ground-shadow"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ground">
+    <div class="flower"><div class="bloom"></div><div class="stem"></div></div>
+    <div class="flower"><div class="bloom"></div><div class="stem"></div></div>
+    <div class="flower"><div class="bloom"></div><div class="stem"></div></div>
+    <div class="flower"><div class="bloom"></div><div class="stem"></div></div>
+  </div>
+
+</body>
+</html>
