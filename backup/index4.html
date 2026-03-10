@@ -7,12 +7,12 @@
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
     />
     <title>Maze Game</title>
-    <script src="/javascript/questions.js"></script>
+    <script src="questions.js"></script>
 
     <link rel="icon" type="image/png" href="/favicon.png" />
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.1/dist/gsap.min.js"></script>
-    <link rel="stylesheet" href="/styles/style.css" />
-    <link rel="stylesheet" href="/styles/rainbow.css" />
+    <link rel="stylesheet" href="style.css" />
+
   </head>
   <body>
     <!-- PASTE YOUR ENTIRE road.svg CONTENT BELOW -->
@@ -238,9 +238,7 @@
           stroke-width="3"
           9
         />
-
-        <!-- ADD animated eyes -->
-        <ellipse
+            <ellipse
           cx="141"
           cy="202"
           rx="1.15"
@@ -261,17 +259,7 @@
 
         <!-- ADD WALKING CHARACTER (no static image, will use <image> via JS) -->
         <image id="character" width="40" height="40" />
-
-        <!-- Speech bubble inside SVG using foreignObject -->
-        <foreignObject
-          id="svg-speech-bubble"
-          x="75"
-          y="-5"
-          width="200"
-          height="140"
-          style="display: none"
-          transform="scale(1)"
-        >
+   
           <div
             xmlns="http://www.w3.org/1999/xhtml"
             style="
@@ -324,23 +312,13 @@
         justify-content: center;
       "
     >
-      <div
-        id="rainbow-stage"
-        style="
-          width: 100vw;
-          height: 100vh;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        "
-      >
-        <canvas id="rainbow" style="width: 100%; height: 100%"></canvas>
+ 
         <img
           id="slide-overlay"
           src="Images/Animation/slide.png"
           alt="Sliding overlay"
         />
-        <script src="/javascript/rainbow.js"></script>
+        
       </div>
       <div
         id="asset-loading"
@@ -384,7 +362,7 @@
       </div>
     </div>
 
-    <script src="/javascript/eye_blink.js"></script>
+    <script src="eye_blink.js"></script>
     <script>
       // Responsive resize for SVG
       function resizeSVG() {
@@ -457,9 +435,9 @@
       }
 
       function startAssetPreload() {
-        const rainbowStage = document.getElementById("rainbow-stage");
+     
         const assetLoading = document.getElementById("asset-loading");
-        if (rainbowStage) rainbowStage.style.display = "none";
+     
         if (assetLoading) assetLoading.style.display = "none";
 
         preloadAllImages(allImagePaths, function () {
@@ -472,14 +450,10 @@
 
       // Wait for DOMContentLoaded, then run image preload only after rainbow is complete.
       document.addEventListener("DOMContentLoaded", function () {
-        if (window.__rainbowDone) {
+     
           startAssetPreload();
           return;
-        }
 
-        window.addEventListener("rainbow:complete", startAssetPreload, {
-          once: true,
-        });
       });
 
       // --- GAME LOGIC MOVED TO FUNCTION ---
@@ -518,7 +492,7 @@
         const evilLength = evilPath.getTotalLength();
 
         // Define checkpoints (distances along the path)
-        const checkpoints = [100, 215, 315]; // Adjust as needed
+        const checkpoints = [] // Adjust as needed
         let checkpointIndex = 0;
         const pauseDuration = 1000; // milliseconds
 
@@ -648,6 +622,9 @@
 
           // ===== SWINGING PHASE (highest priority once active) =====
           if (swinging) {
+            irisEyes.forEach((eye) => {
+              eye.style.display = "none";
+            });
             const elapsed = now - swingStartTime;
             const swingAngle = Math.sin(elapsed / 650) * 20;
             const pivotX = 254,
@@ -673,54 +650,34 @@
               }
                 */
             }
-            let pushAnimationActive = false;
             if (boy) {
-              pushAnimationActive = true;
               // Lock onto push1 at strong forward swing.
               if (swingAngle > 19.5) {
+              //  console.log("Lock push1 ON at angle", swingAngle);
                 lockPush1 = true;
               }
               // Unlock once swing comes back enough to the negative side.
               if (swingAngle < 19.5) {
+                //console.log("Lock push1 OFF at angle", swingAngle);
                 lockPush1 = false;
               }
 
-              // Use a timer for consistent push frame switching
-              if (!window._pushFrameTimer) {
-                window._pushFrameTimer = {
-                  lastSwitch: performance.now(),
-                  index: 1,
-                };
-              }
-              const pushFrameTimer = window._pushFrameTimer;
-              const pushFrameInterval = 250; // ms between frame switches
-
-              if (!lockPush1 && swingAngle < 19.5 && swingAngle > 18.5) {
-                if (now - pushFrameTimer.lastSwitch > pushFrameInterval) {
-                  pushFrameTimer.index = pushFrameTimer.index === 1 ? 2 : 1;
-                  pushFrameTimer.lastSwitch = now;
-                }
-                boy.setAttribute("href", pushFrames[pushFrameTimer.index]);
-              } else if (lockPush1) {
+              if (lockPush1) {
+             
                 boy.setAttribute("href", pushFrames[0]); // push1.png
-              } else {
-                boy.setAttribute("href", pushFrames[2]);
-              }
+              } else if (swingAngle < 19.5 && swingAngle > 18.5) {
+            // Alternate between pushFrames[1] and pushFrames[2] every 200ms
+            const pushFrameIndex = Math.floor((now / 500) % 2) + 1; // 1 or 2
+        boy.setAttribute("href", pushFrames[pushFrameIndex]);
+        } else {
+             boy.setAttribute("href", pushFrames[2]);
+
             }
-            // Only hide iris after push animation is set/active
-            if (pushAnimationActive) {
-              irisEyes.forEach((eye) => {
-                eye.style.display = "none";
-              });
-            } else {
-              irisEyes.forEach((eye) => {
-                eye.style.display = "";
-              });
-            }
+        }
             if (!hasScheduledPianoRedirect) {
               hasScheduledPianoRedirect = true;
               setTimeout(() => {
-                window.location.href = "piano.html";
+                //window.location.href = "piano.html";
               }, 5000);
             }
             requestAnimationFrame(animate);
@@ -849,12 +806,12 @@
             showCheckpointPopup((isCorrect) => {
               if (isCorrect) {
                 checkpointIndex++;
-                distance += 0.6;
+                distance += 2;
                 if (distance > roadPathEnd) distance = roadPathEnd;
               } else {
                 popupsEnabled = false;
                 wrongAnswered = true;
-                distance = checkpoints[checkpointIndex] + 0.6;
+                distance = checkpoints[checkpointIndex] + 2;
                 if (distance > roadPathEnd) distance = roadPathEnd;
                 checkpointIndex++;
               }
@@ -870,7 +827,7 @@
             }
           }
           if (!onEvilPath && distance < roadPathEnd) {
-            distance += 0.6;
+            distance += 2;
             if (distance > roadPathEnd) distance = roadPathEnd;
           } else if (onEvilPath && evilDistance < evilPathEnd) {
             evilDistance += 0.6;
@@ -904,5 +861,5 @@
       }
     </script>
   </body>
-  <script src="javascript/idle.js"></script>
+  <script src="idle.js"></script>
 </html>

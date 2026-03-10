@@ -1,0 +1,217 @@
+#jack-container {
+  position: relative;
+  width: 180px;
+  height: 220px;
+  margin: 0 auto 18px auto;
+  user-select: none;
+}
+
+/* the hint text */
+#jack-hint {
+  text-align: center;
+  font-family: "Comic Sans MS", "Chalkboard SE", cursive;
+  font-size: 13px;
+  color: #c45c8a;
+  margin-bottom: 4px;
+  letter-spacing: 0.5px;
+  min-height: 20px;
+  transition: opacity 0.3s;
+  display: none;
+}
+#jack-svg {
+  position: relative;
+  left: -145px; /* move right (use negative to move left) */
+  top: 40px; /* move up (use positive to move down) */
+}
+
+/* crank handle */
+#crank-group {
+  transform-origin: 158px 148px;
+  transition: transform 0.25s cubic-bezier(0.36, 1.6, 0.6, 1);
+}
+
+/* lid */
+#box-lid {
+  transform-origin: 55px 75px;
+  transition: transform 0.45s cubic-bezier(0.36, 1.6, 0.6, 1);
+}
+
+/* clown body on spring */
+#clown-group {
+  transform-origin: 90px 160px;
+  transition:
+    transform 0.5s cubic-bezier(0.36, 1.9, 0.6, 1),
+    opacity 0.3s;
+  opacity: 0;
+}
+
+/* confetti pieces */
+.confetti-dot {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  pointer-events: none;
+  opacity: 0;
+}
+
+/* surprise text */
+#surprise-text {
+  position: absolute;
+  top: -28px;
+  left: 50%;
+  transform: translateX(-50%) scale(0);
+  font-family: "Comic Sans MS", cursive;
+  font-size: 22px;
+  font-weight: 900;
+  color: #ff4da6;
+  text-shadow:
+    2px 2px 0 #fff,
+    -1px -1px 0 #ffd700;
+  white-space: nowrap;
+  transition: transform 0.4s cubic-bezier(0.36, 1.9, 0.6, 1);
+  z-index: 10;
+}
+
+/* heart banner shown after happy image pops */
+#love-banner {
+  position: absolute;
+  left: 50%;
+  top: 0px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 108px;
+  height: 108px;
+  background: #ff4d5f;
+  border-radius: 16px;
+  transform: translate(-50%, 34px) rotate(-45deg) scale(0.3);
+  transform-origin: center;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 9;
+  box-shadow: 0 8px 18px rgba(176, 24, 53, 0.35);
+}
+
+#love-banner .love-text {
+  width: 150px;
+  transform: translateY(-15px) translateX(15px) rotate(45deg);
+  transform-origin: center;
+  text-align: center;
+  z-index: 2;
+}
+
+#love-banner::before,
+#love-banner::after {
+  content: "";
+  position: absolute;
+  width: 108px;
+  height: 108px;
+  background: #ff4d5f;
+  border-radius: 50%;
+}
+
+#love-banner::before {
+  top: -54px;
+  left: 0;
+}
+
+#love-banner::after {
+  top: 0;
+  left: 54px;
+}
+
+#love-banner p {
+  position: static;
+  width: auto;
+  margin: 0;
+  text-align: center;
+  font-family: "Comic Sans MS", "Chalkboard SE", cursive;
+  font-size: 13px;
+  line-height: 1.05;
+  color: #fff;
+  font-weight: 700;
+  text-shadow: 0 1px 1px rgba(132, 8, 30, 0.5);
+}
+
+#love-banner p + p {
+  margin-top: 1px;
+}
+
+#love-banner p.love-title {
+  font-size: 20px;
+  line-height: 1.05;
+}
+
+/* wiggle animation for crank */
+@keyframes crankWiggle {
+  0% {
+    transform: rotate(0deg);
+  }
+  30% {
+    transform: rotate(-8deg);
+  }
+  70% {
+    transform: rotate(8deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+/* bounce clown */
+@keyframes clownBounce {
+  0% {
+    transform: translateY(0px) scale(1);
+  }
+  20% {
+    transform: translateY(-12px) scale(1.05, 0.95);
+  }
+  40% {
+    transform: translateY(0px) scale(0.95, 1.05);
+  }
+  60% {
+    transform: translateY(-6px) scale(1.02, 0.98);
+  }
+  80% {
+    transform: translateY(0px) scale(0.99, 1.01);
+  }
+  100% {
+    transform: translateY(0px) scale(1);
+  }
+}
+
+.clown-bouncing {
+  animation: clownBounce 0.7s ease-out forwards;
+}
+
+/* confetti fly */
+@keyframes confettiFly {
+  0% {
+    opacity: 1;
+    transform: translate(0, 0) rotate(0deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--tx), var(--ty)) rotate(var(--rot));
+  }
+}
+
+@keyframes bannerRise {
+  0% {
+    transform: translate(-50%, 34px) rotate(-45deg) scale(0.3);
+    opacity: 0;
+  }
+  60% {
+    transform: translate(-50%, -24px) rotate(-45deg) scale(1.05);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -18px) rotate(-45deg) scale(1);
+    opacity: 1;
+  }
+}
+
+.banner-show {
+  animation: bannerRise 0.7s cubic-bezier(0.25, 1.4, 0.5, 1) forwards;
+}
