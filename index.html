@@ -6,12 +6,192 @@
     <title>Hello Kitty Dress Up</title>
     <link rel="icon" type="image/png" href="/favicon.png">
     <link rel="stylesheet" href="styles/style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.1/dist/gsap.min.js"></script>
 
-  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.1/dist/gsap.min.js"></script>
+    <style>
+      /* ── Cute background scene ── */
+      #scene-bg {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        overflow: hidden;
+        background: linear-gradient(175deg, #ffe8f5 0%, #ffd6ef 35%, #ffecd2 80%, #fff5e6 100%);
+        pointer-events: none;
+      }
 
+      /* Sun */
+      .sun {
+        position: absolute;
+        top: 40px;
+        right: 80px;
+        width: 90px;
+        height: 90px;
+      }
+      .sun-core {
+        width: 90px;
+        height: 90px;
+        border-radius: 50%;
+        background: radial-gradient(circle at 38% 38%, #fff7b2, #ffd93d 55%, #ffb347);
+        box-shadow: 0 0 30px 10px #ffe066aa, 0 0 60px 20px #ffd93d44;
+        animation: sun-pulse 3s ease-in-out infinite;
+      }
+      .sun-ray {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 14px;
+        height: 44px;
+        margin-left: -7px;
+        margin-top: -45px;
+        background: linear-gradient(to bottom, #ffe06699, transparent);
+        border-radius: 7px;
+        transform-origin: 7px 45px;
+        animation: ray-spin 12s linear infinite;
+      }
+      @keyframes sun-pulse {
+        0%, 100% { transform: scale(1); box-shadow: 0 0 30px 10px #ffe066aa, 0 0 60px 20px #ffd93d44; }
+        50%       { transform: scale(1.07); box-shadow: 0 0 40px 18px #ffe066cc, 0 0 80px 30px #ffd93d66; }
+      }
+      @keyframes ray-spin {
+        to { transform: rotate(360deg); }
+      }
+
+      /* ── Floating flowers ── */
+      .flower {
+        position: absolute;
+        bottom: -120px;
+        animation: flower-rise linear infinite;
+        opacity: 0;
+        pointer-events: none;
+      }
+      @keyframes flower-rise {
+        0%   { transform: translateY(0)   rotate(0deg) scale(0.7); opacity: 0; }
+        8%   { opacity: 0.9; }
+        85%  { opacity: 0.7; }
+        100% { transform: translateY(-110vh) rotate(340deg) scale(1.1); opacity: 0; }
+      }
+
+      /* ── Birds ── */
+      .bird {
+        position: absolute;
+        animation: bird-fly linear infinite;
+      }
+      @keyframes bird-fly {
+        0%   { transform: translateX(-160px) translateY(0px) scaleX(1); opacity: 0; }
+        5%   { opacity: 1; }
+        48%  { transform: translateX(45vw)  translateY(-30px) scaleX(1); }
+        50%  { transform: translateX(47vw)  translateY(-32px) scaleX(-1); }
+        95%  { opacity: 1; }
+        100% { transform: translateX(-160px) translateY(-8px) scaleX(-1); opacity: 0; }
+      }
+      .bird-wing {
+        animation: flap 0.45s ease-in-out infinite alternate;
+        transform-origin: 50% 100%;
+      }
+      @keyframes flap {
+        from { transform: scaleY(1); }
+        to   { transform: scaleY(-0.35); }
+      }
+
+      /* ── Petal drift ── */
+      .petal {
+        position: absolute;
+        top: -30px;
+        animation: petal-fall linear infinite;
+        opacity: 0;
+      }
+      @keyframes petal-fall {
+        0%   { transform: translateY(0) rotate(0deg) translateX(0); opacity: 0; }
+        10%  { opacity: 0.75; }
+        90%  { opacity: 0.4; }
+        100% { transform: translateY(105vh) rotate(520deg) translateX(60px); opacity: 0; }
+      }
+
+      /* ground grass strip */
+      .grass-strip {
+        position: absolute;
+        bottom: 0;
+        left: 0; right: 0;
+        height: 70px;
+        background: linear-gradient(to top, #b5e48c88, transparent);
+        border-radius: 50% 50% 0 0 / 30px 30px 0 0;
+      }
+
+      /* ensure SVG container sits above bg */
+      #svg-container {
+        position: relative;
+        z-index: 1;
+      }
+    </style>
   </head>
   <body>
-   
+
+    <!-- ══════════════ BACKGROUND SCENE ══════════════ -->
+    <div id="scene-bg">
+
+      <!-- Sun with rays -->
+      <div class="sun">
+        <!-- rays behind core -->
+        <div style="position:absolute;top:0;left:0;width:90px;height:90px;">
+          <div class="sun-ray" style="transform:rotate(0deg)   translateY(0)"></div>
+          <div class="sun-ray" style="transform:rotate(45deg)  translateY(0)"></div>
+          <div class="sun-ray" style="transform:rotate(90deg)  translateY(0)"></div>
+          <div class="sun-ray" style="transform:rotate(135deg) translateY(0)"></div>
+          <div class="sun-ray" style="transform:rotate(180deg) translateY(0)"></div>
+          <div class="sun-ray" style="transform:rotate(225deg) translateY(0)"></div>
+          <div class="sun-ray" style="transform:rotate(270deg) translateY(0)"></div>
+          <div class="sun-ray" style="transform:rotate(315deg) translateY(0)"></div>
+        </div>
+        <div class="sun-core" style="position:absolute;top:0;left:0;"></div>
+        <!-- cute face on sun -->
+        <svg style="position:absolute;top:22px;left:18px;" width="54" height="40" viewBox="0 0 54 40">
+          <ellipse cx="16" cy="12" rx="4.5" ry="5" fill="#d97b00"/>
+          <ellipse cx="38" cy="12" rx="4.5" ry="5" fill="#d97b00"/>
+          <ellipse cx="16" cy="11" rx="2.5" ry="3" fill="#fff"/>
+          <ellipse cx="38" cy="11" rx="2.5" ry="3" fill="#fff"/>
+          <path d="M18 25 Q27 33 36 25" stroke="#d97b00" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          <ellipse cx="27" cy="20" rx="4" ry="3" fill="#ffb347" opacity="0.5"/>
+        </svg>
+      </div>
+
+      <!-- Birds (3) -->
+      <svg class="bird" style="top:10%; animation-duration:14s; animation-delay:0s; width:52px; height:28px;" viewBox="0 0 52 28">
+        <g class="bird-wing" style="transform-origin:26px 18px">
+          <path d="M26 18 Q10 4 2 10 Q14 14 26 18Z" fill="white" stroke="#ddd" stroke-width="0.8"/>
+          <path d="M26 18 Q42 4 50 10 Q38 14 26 18Z" fill="white" stroke="#ddd" stroke-width="0.8"/>
+        </g>
+        <ellipse cx="26" cy="19" rx="6" ry="4" fill="white"/>
+        <ellipse cx="30" cy="18" rx="2" ry="1.5" fill="#ffd6a5"/>
+      </svg>
+
+      <svg class="bird" style="top:18%; animation-duration:18s; animation-delay:5s; width:38px; height:20px;" viewBox="0 0 52 28">
+        <g class="bird-wing" style="transform-origin:26px 18px; animation-delay:0.15s;">
+          <path d="M26 18 Q10 4 2 10 Q14 14 26 18Z" fill="white" stroke="#ddd" stroke-width="0.8"/>
+          <path d="M26 18 Q42 4 50 10 Q38 14 26 18Z" fill="white" stroke="#ddd" stroke-width="0.8"/>
+        </g>
+        <ellipse cx="26" cy="19" rx="6" ry="4" fill="white"/>
+        <ellipse cx="30" cy="18" rx="2" ry="1.5" fill="#ffd6a5"/>
+      </svg>
+
+      <svg class="bird" style="top:8%; animation-duration:22s; animation-delay:9s; width:30px; height:16px;" viewBox="0 0 52 28">
+        <g class="bird-wing" style="transform-origin:26px 18px; animation-delay:0.25s;">
+          <path d="M26 18 Q10 4 2 10 Q14 14 26 18Z" fill="white" stroke="#ddd" stroke-width="0.8"/>
+          <path d="M26 18 Q42 4 50 10 Q38 14 26 18Z" fill="white" stroke="#ddd" stroke-width="0.8"/>
+        </g>
+        <ellipse cx="26" cy="19" rx="6" ry="4" fill="white"/>
+      </svg>
+
+      <!-- Floating flowers (generated via JS below) -->
+      <div id="flowers-container"></div>
+
+      <!-- Falling petals (generated via JS below) -->
+      <div id="petals-container"></div>
+
+      <!-- Soft grass at the bottom -->
+      <div class="grass-strip"></div>
+    </div>
+    <!-- ══════════════ END BACKGROUND SCENE ══════════════ -->
+
     <!-- Dress and Shirt output as SVG overlays -->
     <div
       id="svg-container"
@@ -36,174 +216,106 @@
           stroke-linejoin="round"
           stroke-miterlimit="1.5"
         >
-          <!-- Snap point marker for visual tuning (adjust cx, cy as needed) -->
-          <circle
-            id="shirt-snap-point"
-            cx="643"
-            cy="371"
-            r="8"
-            fill="blue"
-            opacity="0.5"
-          />
-          <circle
-            id="dress-snap-point"
-            cx="645"
-            cy="387.5"
-            r="8"
-            fill="red"
-            opacity="0.5"
-          />
-          <circle
-            id="flower-snap-point"
-            cx="700"
-            cy="250"
-            r="8"
-            fill="purple"
-            opacity="0.5"
-          />
+          <circle id="shirt-snap-point"  cx="643" cy="371"   r="8" fill="blue"   opacity="0.5"/>
+          <circle id="dress-snap-point"  cx="645" cy="387.5" r="8" fill="red"    opacity="0.5"/>
+          <circle id="flower-snap-point" cx="700" cy="250"   r="8" fill="purple" opacity="0.5"/>
 
           <!-- Hello Kitty SVG -->
           <g id="kitty" transform="translate(-205.251 -179.567)">
-            <path
-              d="M814.599 537.236s-26.83 59.85-18.082 73.419c9.546 14.806 9.927 13.154 17.792 14.774 12.676 2.61 34.064-1.645 33.937-1.67l.233-30.656-.233 30.656s33.545 3.472 38.742 1.327c2.786-1.149 9.194-6.648 12.343-14.317 2.957-7.204 2.808-16.437 1.012-22.379-3.707-12.268-17.73-50.045-17.73-50.045-23.768 3.302-46.47 3.035-68.014-1.109z"
-              fill="#fff"
-              stroke="#000"
-              stroke-width="4.5"
-            />
-            <path
-              d="M808.064 536.983s-10.107 12.462-16.013 13.65c-4.637.934-13.232-.875-14.938 5.026-.894 3.094 3.616 9.767 3.616 9.767-3.21.379-7.131 13.458-1.674 16.504 3.612 2.017 13.059 7.317 16.407 3.226 5.849-7.148 18.688-46.109 18.688-46.109l-6.086-2.064zM888.706 536.316s10.107 12.462 16.013 13.65c4.637.934 13.232-.875 14.938 5.026.894 3.094-3.616 9.767-3.616 9.767 3.21.379 7.131 13.458 1.674 16.504-3.612 2.017-13.059 7.317-16.407 3.226-5.849-7.148-18.688-46.11-18.688-46.11l6.086-2.063z"
-              fill="#fff"
-              stroke="#000"
-              stroke-width="4.5"
-            />
-            <path
-              d="M846.419 421.648c50.704 0 91.873 23.194 91.873 60.536 0 37.341-42.137 56.376-92.84 56.376-50.704 0-90.897-19.035-90.897-56.376 0-37.342 41.16-60.536 91.864-60.536z"
-              fill="#fff"
-              stroke="#060000"
-              stroke-width="3.65"
-              transform="matrix(.89619 0 0 1.01801 90.55 -8.824)"
-            />
-            <path
-              id="ear-2"
-              d="M775.94 452.914s-5.537-35.201 5.516-39.335c11.052-4.134 36.772 12.865 36.772 12.865.671 34.623-14.452 41.64-42.288 26.47z"
-              fill="#fff"
-              stroke="#060000"
-              stroke-width="3.5"
-            />
-            <ellipse
-              cx="801.684"
-              cy="446.328"
-              rx="23.033"
-              ry="22.78"
-              fill="#fff"
-            />
-            <!-- ...existing SVG and content... -->
-
-            <path
-              d="M922.7 451.887s5.537-35.201-5.516-39.335c-11.052-4.134-36.772 12.865-36.772 12.865-1.584 29.525 14.696 35.464 42.288 26.47z"
-              fill="#fff"
-              stroke="#060000"
-              stroke-width="3.5"
-              id="ear-1"
-            />
-            <ellipse
-              cx="808.458"
-              cy="495.715"
-              rx="5.086"
-              ry="7.1"
-              class="iris"
-              id="eye-2"
-              transform="translate(.94 1.992)"
-            />
-            <ellipse
-              id="nose"
-              cx="849.266"
-              cy="512.63"
-              rx="9.543"
-              ry="6.942"
-              fill="#fad426"
-              stroke="#000"
-              stroke-width="2"
-            />
-            <ellipse
-              cx="808.458"
-              cy="495.715"
-              rx="5.086"
-              ry="7.1"
-              class="iris"
-              id="eye-1"
-              transform="translate(80.154 2.088)"
-            />
-            <path
-              d="M780.71 489.032s-16.438-1.742-20.263-.524M915.46 486.213s16.438-1.742 20.263-.524M780.351 504.308s-16.438-1.742-20.263-.524M915.82 501.49s16.438-1.742 20.263-.524M784.296 517.187s-16.438-1.742-20.263-.524M911.88 514.369s16.438-1.742 20.263-.524"
-              fill="none"
-              stroke="#000"
-              stroke-width="4.5"
-            />
-            <ellipse
-              cx="801.684"
-              cy="446.328"
-              rx="23.033"
-              ry="22.78"
-              fill="#fff"
-              transform="translate(94.738 -2.024)"
-            />
+            <path d="M814.599 537.236s-26.83 59.85-18.082 73.419c9.546 14.806 9.927 13.154 17.792 14.774 12.676 2.61 34.064-1.645 33.937-1.67l.233-30.656-.233 30.656s33.545 3.472 38.742 1.327c2.786-1.149 9.194-6.648 12.343-14.317 2.957-7.204 2.808-16.437 1.012-22.379-3.707-12.268-17.73-50.045-17.73-50.045-23.768 3.302-46.47 3.035-68.014-1.109z" fill="#fff" stroke="#000" stroke-width="4.5"/>
+            <path d="M808.064 536.983s-10.107 12.462-16.013 13.65c-4.637.934-13.232-.875-14.938 5.026-.894 3.094 3.616 9.767 3.616 9.767-3.21.379-7.131 13.458-1.674 16.504 3.612 2.017 13.059 7.317 16.407 3.226 5.849-7.148 18.688-46.109 18.688-46.109l-6.086-2.064zM888.706 536.316s10.107 12.462 16.013 13.65c4.637.934 13.232-.875 14.938 5.026.894 3.094-3.616 9.767-3.616 9.767 3.21.379 7.131 13.458 1.674 16.504-3.612 2.017-13.059 7.317-16.407 3.226-5.849-7.148-18.688-46.11-18.688-46.11l6.086-2.063z" fill="#fff" stroke="#000" stroke-width="4.5"/>
+            <path d="M846.419 421.648c50.704 0 91.873 23.194 91.873 60.536 0 37.341-42.137 56.376-92.84 56.376-50.704 0-90.897-19.035-90.897-56.376 0-37.342 41.16-60.536 91.864-60.536z" fill="#fff" stroke="#060000" stroke-width="3.65" transform="matrix(.89619 0 0 1.01801 90.55 -8.824)"/>
+            <path id="ear-2" d="M775.94 452.914s-5.537-35.201 5.516-39.335c11.052-4.134 36.772 12.865 36.772 12.865.671 34.623-14.452 41.64-42.288 26.47z" fill="#fff" stroke="#060000" stroke-width="3.5"/>
+            <ellipse cx="801.684" cy="446.328" rx="23.033" ry="22.78" fill="#fff"/>
+            <path d="M922.7 451.887s5.537-35.201-5.516-39.335c-11.052-4.134-36.772 12.865-36.772 12.865-1.584 29.525 14.696 35.464 42.288 26.47z" fill="#fff" stroke="#060000" stroke-width="3.5" id="ear-1"/>
+            <ellipse cx="808.458" cy="495.715" rx="5.086" ry="7.1" class="iris" id="eye-2" transform="translate(.94 1.992)"/>
+            <ellipse id="nose" cx="849.266" cy="512.63" rx="9.543" ry="6.942" fill="#fad426" stroke="#000" stroke-width="2"/>
+            <ellipse cx="808.458" cy="495.715" rx="5.086" ry="7.1" class="iris" id="eye-1" transform="translate(80.154 2.088)"/>
+            <path d="M780.71 489.032s-16.438-1.742-20.263-.524M915.46 486.213s16.438-1.742 20.263-.524M780.351 504.308s-16.438-1.742-20.263-.524M915.82 501.49s16.438-1.742 20.263-.524M784.296 517.187s-16.438-1.742-20.263-.524M911.88 514.369s16.438-1.742 20.263-.524" fill="none" stroke="#000" stroke-width="4.5"/>
+            <ellipse cx="801.684" cy="446.328" rx="23.033" ry="22.78" fill="#fff" transform="translate(94.738 -2.024)"/>
           </g>
-          <!-- Dress and Shirt as SVG images for stable scaling -->
-          <image
-            id="ShirtDrag"
-            href="Images/Clothes/ShirtOutput.svg"
-            x="400"
-            y="350"
-            width="106.5"
-            height="80"
-            style="cursor: grab"
-          />
-          <image
-            id="DressDrag"
-            href="Images/Clothes/DressOutput.svg"
-            x="800"
-            y="350"
-            width="115"
-            height="115"
-            style="cursor: grab"
-          />
-          <image
-            id="FlowerDrag"
-            href="Images/Clothes/flowerOutput.svg"
-            x="410"
-            y="145"
-            width="75"
-            height="180"
-            style="cursor: grab"
-          />
+          <image id="ShirtDrag"  href="Images/Clothes/ShirtOutput.svg"  x="400" y="350" width="106.5" height="80"  style="cursor:grab"/>
+          <image id="DressDrag"  href="Images/Clothes/DressOutput.svg"  x="800" y="350" width="115"   height="115" style="cursor:grab"/>
+          <image id="FlowerDrag" href="Images/Clothes/flowerOutput.svg" x="410" y="145" width="75"    height="180" style="cursor:grab"/>
         </svg>
-              <a href="index3.html" style="text-decoration: none">
-        <button id="cute-btn" class="responsive-btn" style="display: none">
-          🌸 Next! 🌸
-        </button>
-      </a>
-      </div>
 
+        <a href="index3.html" style="text-decoration:none">
+          <button id="cute-btn" class="responsive-btn" style="display:none">🌸 Next! 🌸</button>
+        </a>
     </div>
+
     <script src="javascript/eye_blink.js"></script>
+
     <script>
-      // Dress-up drag and snap logic for SVG images
+      /* ── Spawn floating flowers ── */
+      (function() {
+        const container = document.getElementById('flowers-container');
+        const colors = [
+          ['#ff85c2','#ff4da6'], // hot pink
+          ['#ffb3d9','#ff80bf'], // light pink
+          ['#ff6ec7','#e040a0'], // magenta
+          ['#ffd6f0','#ffaadd'], // pale pink
+          ['#fff0f8','#ffcced'], // blush
+        ];
+        const count = 18;
+        for (let i = 0; i < count; i++) {
+          const [petal, center] = colors[i % colors.length];
+          const size = 24 + Math.random() * 30;
+          const left = Math.random() * 95;
+          const dur  = 9 + Math.random() * 12;
+          const delay = Math.random() * 14;
+
+          const div = document.createElement('div');
+          div.className = 'flower';
+          div.style.cssText = `left:${left}%;animation-duration:${dur}s;animation-delay:${delay}s;`;
+
+          // simple 5-petal SVG flower
+          div.innerHTML = `<svg width="${size}" height="${size}" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+            <g transform="translate(20,20)">
+              ${[0,72,144,216,288].map(a =>
+                `<ellipse cx="0" cy="-11" rx="6" ry="9" fill="${petal}" opacity="0.9"
+                  transform="rotate(${a})" />`
+              ).join('')}
+              <circle cx="0" cy="0" r="7" fill="${center}"/>
+              <circle cx="-2" cy="-2" r="2.5" fill="white" opacity="0.4"/>
+            </g>
+          </svg>`;
+          container.appendChild(div);
+        }
+      })();
+
+      /* ── Spawn falling petals ── */
+      (function() {
+        const container = document.getElementById('petals-container');
+        const petalColors = ['#ffb3d9','#ff85c2','#ffd6f0','#ff6ec7','#ffe0f0'];
+        for (let i = 0; i < 22; i++) {
+          const color = petalColors[i % petalColors.length];
+          const size  = 8 + Math.random() * 10;
+          const left  = Math.random() * 100;
+          const dur   = 6 + Math.random() * 10;
+          const delay = Math.random() * 16;
+
+          const div = document.createElement('div');
+          div.className = 'petal';
+          div.style.cssText = `left:${left}%;animation-duration:${dur}s;animation-delay:${delay}s;`;
+          div.innerHTML = `<svg width="${size}" height="${size*1.5}" viewBox="0 0 10 15" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="5" cy="7.5" rx="4.5" ry="7" fill="${color}" opacity="0.8"/>
+          </svg>`;
+          container.appendChild(div);
+        }
+      })();
+
+      /* ── Dress-up drag and snap logic ── */
       window.addEventListener("DOMContentLoaded", function () {
         const svg = document.querySelector("svg");
-        const dressImg = document.getElementById("DressDrag");
-        const shirtImg = document.getElementById("ShirtDrag");
+        const dressImg       = document.getElementById("DressDrag");
+        const shirtImg       = document.getElementById("ShirtDrag");
         const dressSnapPoint = document.getElementById("dress-snap-point");
         const shirtSnapPoint = document.getElementById("shirt-snap-point");
-        const flowerImg = document.getElementById("FlowerDrag");
-        const flowerSnapPoint = document.getElementById("flower-snap-point");
+        const flowerImg      = document.getElementById("FlowerDrag");
+        const flowerSnapPoint= document.getElementById("flower-snap-point");
 
-        // Shared snap state
-        const snapped = {
-          dress: false,
-          shirt: false,
-          flower: false,
-        };
+        const snapped = { dress: false, shirt: false, flower: false };
 
         function checkAllSnapped() {
           const btn = document.getElementById("cute-btn");
@@ -216,8 +328,6 @@
           }
         }
 
-
-
         function getSnapCoords(snapElem) {
           return {
             x: parseFloat(snapElem.getAttribute("cx")),
@@ -229,96 +339,81 @@
           let offset = { x: 0, y: 0 };
           let dragging = false;
 
+          // Use window-level listeners so fast mouse movement never "escapes" the SVG
+          svgImg.addEventListener("mousedown", startDrag);
+          svgImg.addEventListener("touchstart", startDrag, { passive: false });
 
-            // Mouse events
-            svgImg.addEventListener("mousedown", startDrag);
-            svg.addEventListener("mousemove", drag);
-            svg.addEventListener("mouseup", endDrag);
-            svg.addEventListener("mouseleave", endDrag);
-
-            // Touch events
-            svgImg.addEventListener("touchstart", startDrag, { passive: false });
-            svg.addEventListener("touchmove", drag, { passive: false });
-            svg.addEventListener("touchend", endDrag);
-            svg.addEventListener("touchcancel", endDrag);
-
-
-            function getPointerSVGCoords(evt) {
-              const pt = svg.createSVGPoint();
-              let clientX, clientY;
-              if (evt.touches && evt.touches.length > 0) {
-                clientX = evt.touches[0].clientX;
-                clientY = evt.touches[0].clientY;
-              } else if (evt.changedTouches && evt.changedTouches.length > 0) {
-                clientX = evt.changedTouches[0].clientX;
-                clientY = evt.changedTouches[0].clientY;
-              } else {
-                clientX = evt.clientX;
-                clientY = evt.clientY;
-              }
-              pt.x = clientX;
-              pt.y = clientY;
-              return pt.matrixTransform(svg.getScreenCTM().inverse());
+          function getPointerSVGCoords(evt) {
+            const pt = svg.createSVGPoint();
+            let clientX, clientY;
+            if (evt.touches && evt.touches.length > 0) {
+              clientX = evt.touches[0].clientX; clientY = evt.touches[0].clientY;
+            } else if (evt.changedTouches && evt.changedTouches.length > 0) {
+              clientX = evt.changedTouches[0].clientX; clientY = evt.changedTouches[0].clientY;
+            } else {
+              clientX = evt.clientX; clientY = evt.clientY;
             }
+            pt.x = clientX; pt.y = clientY;
+            return pt.matrixTransform(svg.getScreenCTM().inverse());
+          }
 
-            function startDrag(evt) {
-              evt.preventDefault();
-              dragging = true;
-              svgImg.style.opacity = 0.7;
-              const pointer = getPointerSVGCoords(evt);
-              offset.x = pointer.x - parseFloat(svgImg.getAttribute("x"));
-              offset.y = pointer.y - parseFloat(svgImg.getAttribute("y"));
-            }
+          function startDrag(evt) {
+            evt.preventDefault();
+            dragging = true;
+            svgImg.style.cursor = "grabbing";
+            svgImg.style.opacity = 0.75;
+            const pointer = getPointerSVGCoords(evt);
+            offset.x = pointer.x - parseFloat(svgImg.getAttribute("x"));
+            offset.y = pointer.y - parseFloat(svgImg.getAttribute("y"));
 
-            function drag(evt) {
-              if (!dragging) return;
-              evt.preventDefault();
-              const pointer = getPointerSVGCoords(evt);
-              svgImg.setAttribute("x", pointer.x - offset.x);
-              svgImg.setAttribute("y", pointer.y - offset.y);
-            }
+            // Attach move/end to window so dragging outside SVG still works
+            window.addEventListener("mousemove", drag);
+            window.addEventListener("mouseup",   endDrag);
+            window.addEventListener("touchmove", drag,    { passive: false });
+            window.addEventListener("touchend",  endDrag);
+            window.addEventListener("touchcancel", endDrag);
+          }
 
-            function endDrag(evt) {
-              if (!dragging) return;
-              dragging = false;
-              svgImg.style.opacity = 1;
-              // Snap logic
-              const snapPos = getSnapCoords(snapElem);
-              const imgX =
-                parseFloat(svgImg.getAttribute("x")) +
-                parseFloat(svgImg.getAttribute("width")) / 2;
-              const imgY =
-                parseFloat(svgImg.getAttribute("y")) +
-                parseFloat(svgImg.getAttribute("height")) / 2;
-              const dx = imgX - snapPos.x;
-              const dy = imgY - snapPos.y;
-              const snapRadius = 60;
-              let key = null;
-              if (svgImg.id === "DressDrag") key = "dress";
-              if (svgImg.id === "ShirtDrag") key = "shirt";
-              if (svgImg.id === "FlowerDrag") key = "flower";
-              if (Math.sqrt(dx * dx + dy * dy) < snapRadius) {
-                // Snap to target
-                svgImg.setAttribute(
-                  "x",
-                  snapPos.x - parseFloat(svgImg.getAttribute("width")) / 2,
-                );
-                svgImg.setAttribute(
-                  "y",
-                  snapPos.y - parseFloat(svgImg.getAttribute("height")) / 2,
-                );
-                if (key) snapped[key] = true;
-              } else {
-                if (key) snapped[key] = false;
-              }
-              checkAllSnapped();
+          function drag(evt) {
+            if (!dragging) return;
+            evt.preventDefault();
+            const pointer = getPointerSVGCoords(evt);
+            svgImg.setAttribute("x", pointer.x - offset.x);
+            svgImg.setAttribute("y", pointer.y - offset.y);
+          }
+
+          function endDrag(evt) {
+            if (!dragging) return;
+            dragging = false;
+            svgImg.style.cursor = "grab";
+            svgImg.style.opacity = 1;
+
+            // Clean up window listeners
+            window.removeEventListener("mousemove",   drag);
+            window.removeEventListener("mouseup",     endDrag);
+            window.removeEventListener("touchmove",   drag);
+            window.removeEventListener("touchend",    endDrag);
+            window.removeEventListener("touchcancel", endDrag);
+
+            const snapPos = getSnapCoords(snapElem);
+            const imgX = parseFloat(svgImg.getAttribute("x")) + parseFloat(svgImg.getAttribute("width"))  / 2;
+            const imgY = parseFloat(svgImg.getAttribute("y")) + parseFloat(svgImg.getAttribute("height")) / 2;
+            const dx = imgX - snapPos.x, dy = imgY - snapPos.y;
+            let key = svgImg.id === "DressDrag" ? "dress" : svgImg.id === "ShirtDrag" ? "shirt" : "flower";
+            if (Math.sqrt(dx * dx + dy * dy) < 60) {
+              svgImg.setAttribute("x", snapPos.x - parseFloat(svgImg.getAttribute("width"))  / 2);
+              svgImg.setAttribute("y", snapPos.y - parseFloat(svgImg.getAttribute("height")) / 2);
+              snapped[key] = true;
+            } else {
+              snapped[key] = false;
             }
+            checkAllSnapped();
+          }
         }
 
-        makeSVGDraggable(dressImg, dressSnapPoint);
-        makeSVGDraggable(shirtImg, shirtSnapPoint);
+        makeSVGDraggable(dressImg,  dressSnapPoint);
+        makeSVGDraggable(shirtImg,  shirtSnapPoint);
         makeSVGDraggable(flowerImg, flowerSnapPoint);
-       
       });
     </script>
   </body>
