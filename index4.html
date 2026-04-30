@@ -1,0 +1,2025 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>Hello Kitty Circus Train 🎪</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@800&display=swap");
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        overflow: hidden;
+        width: 100vw;
+        height: 100vh;
+        background: #1a0828;
+        font-family: "Fredoka One", cursive;
+      }
+
+      /* ═══════════════════════════════════
+   PHASE 1 — EXTERIOR SCENE
+═══════════════════════════════════ */
+      #exterior {
+        position: fixed;
+        inset: 0;
+        background: linear-gradient(
+          180deg,
+          #87ceeb 0%,
+          #b8e4f9 38%,
+          #c8f0c8 68%,
+          #7ab840 100%
+        );
+        transition: opacity 0.8s ease;
+        z-index: 10;
+      }
+      #exterior.hidden {
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      /* Clouds */
+      .cloud {
+        position: absolute;
+        background: white;
+        border-radius: 50px;
+        opacity: 0.82;
+      }
+      .cloud::before,
+      .cloud::after {
+        content: "";
+        position: absolute;
+        background: white;
+        border-radius: 50%;
+      }
+      .cl1 {
+        width: 120px;
+        height: 40px;
+        top: 7%;
+        animation: cMov 18s linear infinite;
+      }
+      .cl1::before {
+        width: 60px;
+        height: 55px;
+        top: -30px;
+        left: 20px;
+      }
+      .cl1::after {
+        width: 45px;
+        height: 40px;
+        top: -20px;
+        left: 55px;
+      }
+      .cl2 {
+        width: 90px;
+        height: 30px;
+        top: 13%;
+        animation: cMov 26s 8s linear infinite;
+      }
+      .cl2::before {
+        width: 45px;
+        height: 40px;
+        top: -22px;
+        left: 15px;
+      }
+      .cl2::after {
+        width: 35px;
+        height: 30px;
+        top: -14px;
+        left: 42px;
+      }
+      .cl3 {
+        width: 150px;
+        height: 50px;
+        top: 4%;
+        animation: cMov 20s 14s linear infinite;
+      }
+      .cl3::before {
+        width: 80px;
+        height: 65px;
+        top: -38px;
+        left: 25px;
+      }
+      .cl3::after {
+        width: 60px;
+        height: 50px;
+        top: -27px;
+        left: 72px;
+      }
+      @keyframes cMov {
+        from {
+          left: -220px;
+        }
+        to {
+          left: 110vw;
+        }
+      }
+
+      .palm {
+        position: absolute;
+        font-size: 2.6rem;
+      }
+      .p1 {
+        left: 2%;
+        bottom: 20%;
+      }
+      .p2 {
+        left: 9%;
+        bottom: 19%;
+      }
+      .p3 {
+        right: 35%;
+        bottom: 21%;
+      }
+
+      /* TRACK exterior */
+      #ext-track {
+        position: absolute;
+        bottom: 18%;
+        left: 0;
+        width: 100%;
+        height: 60px;
+      }
+      .sleeper {
+        position: absolute;
+        top: 4px;
+        height: 38px;
+        width: 300%;
+        background: repeating-linear-gradient(
+          90deg,
+          #8b5e3c 0,
+          #8b5e3c 22px,
+          transparent 22px,
+          transparent 52px
+        );
+        animation: rScr 1.1s linear infinite;
+      }
+      .rail {
+        position: absolute;
+        height: 5px;
+        width: 300%;
+        background: #bbb;
+        animation: rScr 1.1s linear infinite;
+      }
+      .rt {
+        top: 8px;
+      }
+      .rb {
+        top: 30px;
+      }
+      @keyframes rScr {
+        from {
+          left: 0;
+        }
+        to {
+          left: -74px;
+        }
+      }
+      #ext-ground {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        height: 20%;
+        background: linear-gradient(180deg, #7ab840, #5a8830);
+      }
+
+      /* TENT (exterior) */
+      #tent-ext {
+        position: absolute;
+        right: -10px;
+        bottom: 17%;
+        width: 360px;
+        height: 360px;
+      }
+
+      /* EXTERIOR TRAIN */
+      #ext-train {
+        position: absolute;
+        bottom: calc(18% + 32px);
+        display: flex;
+        align-items: flex-end;
+        animation: extRide 6s cubic-bezier(0.4, 0, 0.55, 1) forwards;
+      }
+      @keyframes extRide {
+        0% {
+          left: -500px;
+        }
+        52% {
+          left: calc(50vw - 320px);
+        }
+        72% {
+          left: calc(50vw - 320px);
+        }
+        86% {
+          left: calc(50vw - 320px);
+          opacity: 1;
+        }
+        100% {
+          left: calc(100vw + 100px);
+          opacity: 0.4;
+        }
+      }
+
+      /* Steam */
+      .stm {
+        position: absolute;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.86);
+        animation: stmUp 1.3s ease-out infinite;
+      }
+      @keyframes stmUp {
+        0% {
+          opacity: 0.9;
+          transform: scale(0.3) translateY(0);
+        }
+        100% {
+          opacity: 0;
+          transform: scale(2) translateY(-70px);
+        }
+      }
+      .st1 {
+        width: 26px;
+        height: 26px;
+        top: -22px;
+        left: 26px;
+      }
+      .st2 {
+        width: 19px;
+        height: 19px;
+        top: -16px;
+        left: 46px;
+        animation-delay: 0.38s;
+      }
+      .st3 {
+        width: 14px;
+        height: 14px;
+        top: -10px;
+        left: 64px;
+        animation-delay: 0.76s;
+      }
+
+      /* Pull cord */
+      #cord {
+        position: absolute;
+        top: -2px;
+        right: -20px;
+        width: 3px;
+        height: 32px;
+        background: #8b5e3c;
+        border-radius: 2px;
+        transform-origin: top center;
+        animation: cordP 0.38s ease-in-out infinite alternate;
+      }
+      #cord::after {
+        content: "🔔";
+        font-size: 15px;
+        position: absolute;
+        top: -18px;
+        left: -7px;
+      }
+      @keyframes cordP {
+        from {
+          transform: scaleY(0.65) rotate(-10deg);
+        }
+        to {
+          transform: scaleY(1.1) rotate(6deg);
+        }
+      }
+      #driver-ext {
+        position: absolute;
+        top: 8px;
+        left: 108px;
+        width: 54px;
+        height: 54px;
+      }
+
+      /* ═══════════════════════════════════
+   PHASE 2 — CIRCUS INTERIOR (subway-surfers scrolling world)
+═══════════════════════════════════ */
+      #interior {
+        position: fixed;
+        inset: 0;
+        z-index: 20;
+        overflow: hidden;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.6s ease;
+      }
+      #interior.show {
+        opacity: 1;
+        pointer-events: all;
+      }
+
+      /* ── SCROLLING WORLD ── */
+      #world {
+        position: absolute;
+        top: 0;
+        /* wide enough for all stations */
+        width: 5000px;
+        height: 100%;
+        will-change: transform;
+        transition: transform 1.4s cubic-bezier(0.6, 0, 0.3, 1);
+      }
+
+      /* ── SKY / BG inside tent ── */
+      #int-bg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background:
+          radial-gradient(
+            ellipse 100% 60% at 50% 100%,
+            #b05010 0%,
+            transparent 60%
+          ),
+          radial-gradient(
+            ellipse 100% 100% at 50% -5%,
+            #1a0828 0%,
+            #3d1408 55%,
+            #5c2208 100%
+          );
+      }
+      /* Tent stripe rays repeating every screen width */
+      #int-rays {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: repeating-conic-gradient(
+          from 0deg at 50% -8%,
+          rgba(210, 70, 20, 0.16) 0deg,
+          rgba(210, 70, 20, 0.16) 5deg,
+          rgba(255, 190, 40, 0.06) 5deg,
+          rgba(255, 190, 40, 0.06) 10deg
+        );
+      }
+
+      /* ── INTERIOR FLOOR / TRACK ── */
+      #int-floor {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 38%;
+        background:
+          linear-gradient(180deg, transparent 0%, rgba(130, 55, 10, 0.8) 100%),
+          repeating-linear-gradient(
+            90deg,
+            rgba(255, 255, 255, 0.055) 0,
+            rgba(255, 255, 255, 0.055) 60px,
+            transparent 60px,
+            transparent 120px
+          );
+        border-top: 4px solid rgba(255, 180, 60, 0.3);
+      }
+      /* Interior track rails that SCROLL */
+      #int-track {
+        position: absolute;
+        bottom: 22%;
+        left: 0;
+        width: 100%;
+        height: 44px;
+      }
+      .int-sleeper {
+        position: absolute;
+        top: 4px;
+        height: 38px;
+        width: 100%;
+        background: repeating-linear-gradient(
+          90deg,
+          rgba(139, 94, 60, 0.9) 0,
+          rgba(139, 94, 60, 0.9) 20px,
+          transparent 20px,
+          transparent 48px
+        );
+      }
+      .int-rail {
+        position: absolute;
+        height: 5px;
+        width: 100%;
+        background: rgba(180, 180, 180, 0.7);
+      }
+      .int-rt {
+        top: 7px;
+      }
+      .int-rb {
+        top: 27px;
+      }
+
+      /* ── STATION PLATFORMS ── */
+      .station {
+        position: absolute;
+        bottom: 22%;
+        width: 220px;
+        height: 80px;
+        background: linear-gradient(
+          180deg,
+          rgba(180, 100, 30, 0.9),
+          rgba(120, 60, 10, 0.9)
+        );
+        border-top: 4px solid #ffd700;
+        border-radius: 8px 8px 0 0;
+      }
+
+      /* ── HANGING BULBS across ceiling ── */
+      .hbulb-wrap {
+        position: absolute;
+        top: 0;
+      }
+      .hbulb-wire {
+        position: absolute;
+        top: 0;
+        left: 50%;
+        width: 2px;
+        background: #444;
+        transform: translateX(-50%);
+      }
+      .hbulb-lamp {
+        position: absolute;
+        bottom: 0;
+        width: 13px;
+        height: 18px;
+        background: radial-gradient(
+          circle at 50% 35%,
+          #fffacd,
+          #ffd700 55%,
+          #b8860b
+        );
+        border-radius: 50% 50% 42% 42%;
+        box-shadow:
+          0 0 10px #ffd700,
+          0 0 20px rgba(255, 200, 0, 0.35);
+        animation: lBlink 1.6s ease-in-out infinite alternate;
+      }
+      @keyframes lBlink {
+        from {
+          box-shadow:
+            0 0 10px #ffd700,
+            0 0 20px rgba(255, 200, 0, 0.35);
+        }
+        to {
+          box-shadow:
+            0 0 4px #ffd700,
+            0 0 8px rgba(255, 200, 0, 0.12);
+        }
+      }
+
+      /* ── PENNANT STRINGS ── */
+      .pennant-line {
+        position: absolute;
+        top: 12%;
+        height: 2px;
+        background: #555;
+      }
+      .pennant-tri {
+        position: absolute;
+        top: 0;
+        clip-path: polygon(0 0, 100% 0, 50% 100%);
+        animation: pWave 1.4s ease-in-out infinite alternate;
+      }
+      @keyframes pWave {
+        from {
+          transform: rotate(-7deg);
+        }
+        to {
+          transform: rotate(7deg);
+        }
+      }
+
+      /* ── CIRCUS SIGN (fixed) ── */
+      #int-sign {
+        position: fixed;
+        top: 18px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: linear-gradient(135deg, #8b0000, #cc0000);
+        border: 4px solid #ffd700;
+        border-radius: 14px;
+        padding: 9px 28px;
+        z-index: 50;
+        font-size: clamp(1.4rem, 3.5vw, 2.2rem);
+        color: #ffd700;
+        text-shadow:
+          0 0 16px #ff4400,
+          2px 2px 0 #330000;
+        box-shadow:
+          0 0 28px rgba(255, 200, 0, 0.45),
+          inset 0 0 16px rgba(0, 0, 0, 0.4);
+        white-space: nowrap;
+        opacity: 0;
+        transition: opacity 0.7s 0.3s;
+        animation: sGlow 1.8s ease-in-out infinite alternate;
+      }
+      #int-sign.show {
+        opacity: 1;
+      }
+      @keyframes sGlow {
+        from {
+          box-shadow:
+            0 0 18px rgba(255, 200, 0, 0.4),
+            inset 0 0 16px rgba(0, 0, 0, 0.4);
+        }
+        to {
+          box-shadow:
+            0 0 45px rgba(255, 200, 0, 0.8),
+            0 0 70px rgba(255, 100, 0, 0.28),
+            inset 0 0 16px rgba(0, 0, 0, 0.4);
+        }
+      }
+      .sb {
+        display: inline-block;
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        background: #ffd700;
+        margin: 0 4px;
+        box-shadow: 0 0 7px #ffd700;
+        animation: bFlk 1.1s ease-in-out infinite alternate;
+      }
+      @keyframes bFlk {
+        from {
+          opacity: 1;
+        }
+        to {
+          opacity: 0.25;
+        }
+      }
+
+      /* ── CURTAINS (open on entry) ── */
+      #curtains {
+        position: fixed;
+        inset: 0;
+        z-index: 30;
+        pointer-events: none;
+      }
+      .curt {
+        position: absolute;
+        top: 0;
+        height: 100%;
+        width: 52%;
+        background: linear-gradient(
+          180deg,
+          #9b0000,
+          #cc1111 35%,
+          #991111 65%,
+          #660000
+        );
+        transition: transform 1.5s cubic-bezier(0.6, 0, 0.25, 1);
+        overflow: hidden;
+      }
+      .curt::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: repeating-linear-gradient(
+          90deg,
+          rgba(0, 0, 0, 0.2) 0,
+          transparent 16px,
+          rgba(255, 255, 255, 0.06) 20px,
+          transparent 34px
+        );
+      }
+      .curt::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 22px;
+        background: linear-gradient(180deg, #ffd700, #b8860b 90%, #8b6914);
+      }
+      .curt-swag {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 90px;
+        background: radial-gradient(
+          ellipse 55% 75% at 50% 115%,
+          #780000,
+          transparent 68%
+        );
+      }
+      .curt-trim {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 22px;
+        background: linear-gradient(
+          180deg,
+          #ffd700,
+          #b8860b,
+          #ffd700,
+          #b8860b,
+          #ffd700
+        );
+        z-index: 2;
+      }
+      .tassel {
+        position: absolute;
+        bottom: 26%;
+        width: 14px;
+        height: 50px;
+        background: linear-gradient(180deg, #ffd700, #daa520);
+        border-radius: 0 0 7px 7px;
+        z-index: 3;
+      }
+      #cl {
+        left: 0;
+        transform-origin: left center;
+      }
+      #cr {
+        right: 0;
+        transform-origin: right center;
+      }
+      #cl .curt-trim {
+        right: 0;
+      }
+      #cr .curt-trim {
+        left: 0;
+      }
+      #cl .tassel {
+        right: 6px;
+      }
+      #cr .tassel {
+        left: 6px;
+      }
+      #curtains.open #cl {
+        transform: translateX(-92%);
+      }
+      #curtains.open #cr {
+        transform: translateX(92%);
+      }
+
+      /* ── INTERIOR TRAIN (fixed viewport, world scrolls under it) ── */
+      #int-train {
+        position: fixed;
+        bottom: calc(22% + 38px);
+        left: 12%; /* train sits left-of-centre so there's room to reveal frames */
+        display: flex;
+        align-items: flex-end;
+        z-index: 40;
+        transition: transform 0.3s ease;
+      }
+      /* subtle bounce when stopping */
+      #int-train.stopping {
+        animation: trainBounce 0.4s ease;
+      }
+      @keyframes trainBounce {
+        0% {
+          transform: translateY(0);
+        }
+        40% {
+          transform: translateY(-10px);
+        }
+        100% {
+          transform: translateY(0);
+        }
+      }
+
+      /* Interior steam */
+      .istm {
+        position: absolute;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.82);
+        animation: istmUp 1.3s ease-out infinite;
+      }
+      @keyframes istmUp {
+        0% {
+          opacity: 0.9;
+          transform: scale(0.3) translateY(0);
+        }
+        100% {
+          opacity: 0;
+          transform: scale(1.8) translateY(-60px);
+        }
+      }
+      .is1 {
+        width: 24px;
+        height: 24px;
+        top: -20px;
+        left: 26px;
+      }
+      .is2 {
+        width: 18px;
+        height: 18px;
+        top: -14px;
+        left: 44px;
+        animation-delay: 0.38s;
+      }
+      .is3 {
+        width: 13px;
+        height: 13px;
+        top: -10px;
+        left: 62px;
+        animation-delay: 0.76s;
+      }
+
+      /* ── FRAME POPUP — appears at each station ── */
+      #frame-popup {
+        position: fixed;
+        right: 5%;
+        top: 50%;
+        transform: translateY(-50%) scale(0) rotate(8deg);
+        z-index: 45;
+        transition:
+          transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1),
+          opacity 0.4s;
+        opacity: 0;
+        pointer-events: none;
+      }
+      #frame-popup.show {
+        transform: translateY(-50%) scale(1) rotate(0deg);
+        opacity: 1;
+        pointer-events: all;
+      }
+      /* Ornate frame border */
+      .fp-border {
+        position: relative;
+        border: 8px solid #8b4513;
+        outline: 3px solid #ffd700;
+        outline-offset: -3px;
+        box-shadow:
+          0 0 0 11px #8b4513,
+          0 16px 50px rgba(0, 0, 0, 0.8),
+          inset 0 0 14px rgba(0, 0, 0, 0.5);
+        background: #111;
+        overflow: hidden;
+        width: 200px;
+        height: 240px;
+      }
+      .fp-border img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .fp-fallback {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3.5rem;
+      }
+      .fp-plate {
+        position: absolute;
+        bottom: -34px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: linear-gradient(135deg, #7a5800, #ffd700, #7a5800);
+        padding: 4px 18px;
+        border-radius: 4px;
+        font-family: "Nunito", sans-serif;
+        font-size: 0.75rem;
+        font-weight: 800;
+        color: #1a0800;
+        white-space: nowrap;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.55);
+      }
+      /* HK character at bottom of frame */
+      .fp-hk {
+        position: absolute;
+        bottom: -44px;
+        left: 50%;
+        transform: translateX(-50%);
+        animation: fpHkBob 0.85s ease-in-out infinite alternate;
+      }
+      @keyframes fpHkBob {
+        from {
+          transform: translateX(-50%) translateY(0);
+        }
+        to {
+          transform: translateX(-50%) translateY(-8px);
+        }
+      }
+
+      /* ── STATION NAME SIGN ── */
+      #station-sign {
+        position: fixed;
+        bottom: calc(22% + 125px);
+        left: 50%;
+        transform: translateX(-50%) translateY(20px);
+        background: rgba(0, 0, 0, 0.8);
+        border: 2px solid #ffd700;
+        border-radius: 8px;
+        padding: 6px 20px;
+        color: #ffd700;
+        font-size: 1.1rem;
+        white-space: nowrap;
+        z-index: 46;
+        opacity: 0;
+        transition:
+          opacity 0.4s,
+          transform 0.4s;
+      }
+      #station-sign.show {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+
+      /* ── CONFETTI ── */
+      .cfti {
+        position: fixed;
+        width: 8px;
+        height: 8px;
+        border-radius: 2px;
+        animation: cfFall linear infinite;
+        opacity: 0;
+        z-index: 48;
+      }
+      @keyframes cfFall {
+        0% {
+          opacity: 1;
+          transform: translateY(-10px) rotate(0);
+        }
+        100% {
+          opacity: 0;
+          transform: translateY(105vh) rotate(720deg);
+        }
+      }
+
+      /* ── NEXT / RESTART BUTTONS ── */
+      #nav-btns {
+        position: fixed;
+        bottom: 16px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 14px;
+        z-index: 50;
+      }
+      .nav-btn {
+        padding: 10px 28px;
+        border: 3px solid #ffd700;
+        border-radius: 50px;
+        background: rgba(100, 0, 0, 0.88);
+        color: #ffd700;
+        font-family: "Fredoka One", cursive;
+        font-size: 1rem;
+        cursor: pointer;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+        opacity: 0;
+        pointer-events: none;
+        transition:
+          opacity 0.4s,
+          transform 0.2s;
+      }
+      .nav-btn.show {
+        opacity: 1;
+        pointer-events: all;
+      }
+      .nav-btn:hover {
+        transform: scale(1.07);
+      }
+
+      /* ── PROGRESS DOTS ── */
+      #progress {
+        position: fixed;
+        top: 76px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 10px;
+        z-index: 50;
+      }
+      .prog-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.25);
+        border: 2px solid rgba(255, 200, 0, 0.4);
+        transition:
+          background 0.4s,
+          box-shadow 0.4s;
+      }
+      .prog-dot.active {
+        background: #ffd700;
+        box-shadow: 0 0 10px #ffd700;
+      }
+      .prog-dot.done {
+        background: rgba(255, 200, 100, 0.5);
+      }
+
+      /* INNER BALLOONS */
+      .iball {
+        position: fixed;
+        font-size: 1.8rem;
+        z-index: 35;
+        animation: ballF 4s ease-in-out infinite alternate;
+        pointer-events: none;
+      }
+      @keyframes ballF {
+        from {
+          transform: translateY(0) rotate(-5deg);
+        }
+        to {
+          transform: translateY(-28px) rotate(5deg);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- ═══════════════════════════════════════
+     PHASE 1 — EXTERIOR
+═════════════════════════════════════════ -->
+    <div id="exterior">
+      <div class="cloud cl1" style="left: -160px"></div>
+      <div class="cloud cl2" style="left: -120px"></div>
+      <div class="cloud cl3" style="left: -190px"></div>
+      <div class="palm p1">🌴</div>
+      <div class="palm p2">🌴</div>
+      <div class="palm p3">🌴</div>
+
+      <!-- TENT SVG -->
+      <div id="tent-ext">
+        <svg
+          viewBox="0 0 360 360"
+          width="360"
+          height="360"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <ellipse cx="180" cy="356" rx="148" ry="11" fill="rgba(0,0,0,.15)" />
+          <path d="M180,28 L28,296 L95,296 Z" fill="#DC143C" />
+          <path d="M180,28 L95,296 L158,296 Z" fill="#FFD700" />
+          <path d="M180,28 L158,296 L202,296 Z" fill="#DC143C" />
+          <path d="M180,28 L202,296 L265,296 Z" fill="#FFD700" />
+          <path d="M180,28 L265,296 L332,296 Z" fill="#DC143C" />
+          <rect x="28" y="284" width="304" height="16" rx="4" fill="#B22222" />
+          <rect x="28" y="280" width="304" height="7" rx="3" fill="#FFD700" />
+          <path d="M105,62 L22,205 L84,205 Z" fill="#FFD700" opacity=".62" />
+          <path d="M105,62 L84,205 L126,205 Z" fill="#DC143C" opacity=".62" />
+          <path d="M255,62 L208,205 L270,205 Z" fill="#FFD700" opacity=".62" />
+          <path d="M255,62 L270,205 L318,205 Z" fill="#DC143C" opacity=".62" />
+          <path
+            d="M136,296 Q136,224 180,224 Q224,224 224,296 Z"
+            fill="#8B0000"
+          />
+          <path
+            d="M142,296 Q142,230 180,230 Q218,230 218,296 Z"
+            fill="rgba(0,0,0,.45)"
+          />
+          <path
+            d="M132,272 Q132,212 180,212 Q228,212 228,272"
+            fill="none"
+            stroke="#FFD700"
+            stroke-width="4"
+          />
+          <path
+            d="M136,228 Q140,216 144,228 Q148,216 152,228 Q156,216 160,228 Q164,216 168,228"
+            fill="none"
+            stroke="#FFD700"
+            stroke-width="3.5"
+            stroke-linecap="round"
+          />
+          <path
+            d="M192,228 Q196,216 200,228 Q204,216 208,228 Q212,216 216,228 Q220,216 224,228"
+            fill="none"
+            stroke="#FFD700"
+            stroke-width="3.5"
+            stroke-linecap="round"
+          />
+          <polygon points="180,1 169,30 191,30" fill="#FFD700" />
+          <rect x="178" y="1" width="3" height="32" fill="#333" />
+          <polygon points="181,1 208,13 181,25" fill="#DC143C" />
+          <polygon points="105,54 97,74 113,74" fill="#FFD700" />
+          <rect x="103" y="54" width="2.5" height="22" fill="#333" />
+          <polygon points="105,54 122,62 105,70" fill="#FFD700" />
+          <polygon points="255,54 247,74 263,74" fill="#FFD700" />
+          <rect x="254" y="54" width="2.5" height="22" fill="#333" />
+          <polygon points="256,54 273,62 256,70" fill="#FFD700" />
+          <text
+            x="72"
+            y="205"
+            font-size="17"
+            fill="#FFD700"
+            text-anchor="middle"
+          >
+            ★
+          </text>
+          <text
+            x="288"
+            y="205"
+            font-size="17"
+            fill="#FFD700"
+            text-anchor="middle"
+          >
+            ★
+          </text>
+          <rect x="138" y="192" width="84" height="24" rx="6" fill="#FFD700" />
+          <text
+            x="180"
+            y="209"
+            font-size="11.5"
+            fill="#8B0000"
+            font-family="'Fredoka One',cursive"
+            text-anchor="middle"
+          >
+            CIRCUS
+          </text>
+          <path
+            d="M28,82 Q104,60 180,72 Q256,60 332,82"
+            fill="none"
+            stroke="#444"
+            stroke-width="1.5"
+          />
+          <polygon points="55,76 67,76 61,94" fill="#DC143C" />
+          <polygon points="78,70 90,70 84,88" fill="#4169E1" />
+          <polygon points="101,66 113,66 107,84" fill="#FFD700" />
+          <polygon points="124,63 136,63 130,81" fill="#228B22" />
+          <polygon points="162,67 174,67 168,85" fill="#DC143C" />
+          <polygon points="186,67 198,67 192,85" fill="#FF69B4" />
+          <polygon points="224,63 236,63 230,81" fill="#FFD700" />
+          <polygon points="247,65 259,65 253,83" fill="#4169E1" />
+          <polygon points="270,68 282,68 276,86" fill="#DC143C" />
+          <polygon points="293,72 305,72 299,90" fill="#228B22" />
+        </svg>
+      </div>
+
+      <!-- EXTERIOR TRAIN -->
+      <div id="ext-train">
+        <!-- CARRIAGE -->
+        <div
+          style="
+            position: relative;
+            width: 150px;
+            height: 110px;
+            flex-shrink: 0;
+            margin-left: 0;
+          "
+        >
+          <svg
+            viewBox="0 0 155 115"
+            width="155"
+            height="115"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <rect x="8" y="18" width="139" height="68" rx="12" fill="#FF69B4" />
+            <rect x="8" y="18" width="139" height="13" rx="6" fill="#FF1493" />
+            <text
+              x="77"
+              y="68"
+              font-size="13"
+              fill="white"
+              text-anchor="middle"
+            >
+              ★ ★ ★
+            </text>
+            <rect
+              x="18"
+              y="28"
+              width="42"
+              height="32"
+              rx="6"
+              fill="#AEE6F8"
+              stroke="white"
+              stroke-width="2.5"
+            />
+            <rect
+              x="94"
+              y="28"
+              width="42"
+              height="32"
+              rx="6"
+              fill="#AEE6F8"
+              stroke="white"
+              stroke-width="2.5"
+            />
+            <rect x="8" y="79" width="139" height="8" rx="3" fill="#FFD700" />
+            <rect x="0" y="50" width="14" height="9" rx="3" fill="#888" />
+            <rect x="18" y="84" width="8" height="20" rx="2" fill="#555" />
+            <rect x="68" y="84" width="8" height="20" rx="2" fill="#555" />
+            <rect x="118" y="84" width="8" height="20" rx="2" fill="#555" />
+            <circle
+              cx="22"
+              cy="100"
+              r="13"
+              fill="#333"
+              stroke="#FFD700"
+              stroke-width="3"
+            />
+            <circle cx="22" cy="100" r="5.5" fill="#FFD700" />
+            <circle
+              cx="72"
+              cy="100"
+              r="13"
+              fill="#333"
+              stroke="#FFD700"
+              stroke-width="3"
+            />
+            <circle cx="72" cy="100" r="5.5" fill="#FFD700" />
+            <circle
+              cx="122"
+              cy="100"
+              r="13"
+              fill="#333"
+              stroke="#FFD700"
+              stroke-width="3"
+            />
+            <circle cx="122" cy="100" r="5.5" fill="#FFD700" />
+          </svg>
+          <div
+            style="
+              position: absolute;
+              top: 26px;
+              left: 16px;
+              width: 46px;
+              height: 35px;
+              overflow: hidden;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+            "
+          >
+            <img
+              src="Images/Animation/kuromi1.png"
+              style="height: 36px; width: auto; object-fit: contain"
+              onerror="this.style.display = 'none'"
+            />
+          </div>
+        </div>
+        <!-- ENGINE -->
+        <div
+          style="
+            position: relative;
+            width: 210px;
+            height: 135px;
+            flex-shrink: 0;
+          "
+        >
+          <div class="stm st1"></div>
+          <div class="stm st2"></div>
+          <div class="stm st3"></div>
+          <svg
+            viewBox="0 0 210 135"
+            width="210"
+            height="135"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <rect
+              x="28"
+              y="30"
+              width="138"
+              height="72"
+              rx="14"
+              fill="#CC0000"
+            />
+            <rect x="28" y="30" width="138" height="17" rx="8" fill="#990000" />
+            <rect x="136" y="14" width="58" height="88" rx="8" fill="#CC0000" />
+            <rect x="136" y="14" width="58" height="13" rx="6" fill="#8B0000" />
+            <rect
+              x="144"
+              y="22"
+              width="26"
+              height="22"
+              rx="5"
+              fill="#87CEEB"
+              stroke="white"
+              stroke-width="2"
+            />
+            <rect
+              x="168"
+              y="22"
+              width="20"
+              height="22"
+              rx="5"
+              fill="#87CEEB"
+              stroke="white"
+              stroke-width="2"
+            />
+            <rect x="44" y="13" width="17" height="19" rx="4" fill="#333" />
+            <rect x="38" y="9" width="29" height="8" rx="4" fill="#222" />
+            <circle cx="30" cy="58" r="10" fill="#FFD700" />
+            <circle cx="30" cy="58" r="7" fill="#FFFACD" />
+            <rect x="28" y="94" width="138" height="8" rx="3" fill="#FFD700" />
+            <text
+              x="90"
+              y="82"
+              font-size="14"
+              fill="#FFD700"
+              text-anchor="middle"
+            >
+              ★
+            </text>
+            <rect x="10" y="90" width="22" height="10" rx="3" fill="#555" />
+            <circle
+              cx="55"
+              cy="112"
+              r="17"
+              fill="#222"
+              stroke="#FFD700"
+              stroke-width="3.5"
+            />
+            <circle cx="55" cy="112" r="7.5" fill="#FFD700" />
+            <circle
+              cx="103"
+              cy="112"
+              r="17"
+              fill="#222"
+              stroke="#FFD700"
+              stroke-width="3.5"
+            />
+            <circle cx="103" cy="112" r="7.5" fill="#FFD700" />
+            <circle
+              cx="150"
+              cy="112"
+              r="15"
+              fill="#222"
+              stroke="#FFD700"
+              stroke-width="3.5"
+            />
+            <circle cx="150" cy="112" r="6.5" fill="#FFD700" />
+            <rect x="28" y="106" width="126" height="6" rx="3" fill="#888" />
+            <rect x="50" y="106" width="9" height="6" fill="#aaa" />
+            <rect x="98" y="106" width="9" height="6" fill="#aaa" />
+            <rect x="188" y="56" width="20" height="9" rx="3" fill="#888" />
+          </svg>
+          <div id="driver-ext">
+            <img
+              src="Images/Animation/Boy1.png"
+              style="width: 54px; height: 54px; object-fit: contain"
+              onerror="this.style.display = 'none'"
+            />
+            <div id="cord"></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="ext-track">
+        <div class="sleeper"></div>
+        <div class="rail rt"></div>
+        <div class="rail rb"></div>
+      </div>
+      <div id="ext-ground"></div>
+    </div>
+    <!-- end exterior -->
+
+    <!-- ═══════════════════════════════════════
+     PHASE 2 — INTERIOR CIRCUS WORLD
+═════════════════════════════════════════ -->
+    <div id="interior">
+      <!-- Scrolling world -->
+      <div id="world">
+        <div id="int-bg"></div>
+        <div id="int-rays"></div>
+        <div id="int-floor"></div>
+        <!-- Interior track -->
+        <div id="int-track">
+          <div class="int-sleeper"></div>
+          <div class="int-rail int-rt"></div>
+          <div class="int-rail int-rb"></div>
+        </div>
+        <!-- Platforms and decorations built by JS -->
+        <div id="world-decor"></div>
+      </div>
+
+      <!-- Fixed circus sign -->
+      <div id="int-sign">
+        <span class="sb"></span>✦ CIRCUS ✦<span
+          class="sb"
+          style="animation-delay: 0.5s"
+        ></span>
+      </div>
+
+      <!-- Progress dots -->
+      <div id="progress"></div>
+
+      <!-- Curtains (open on entry) -->
+      <div id="curtains">
+        <div class="curt" id="cl">
+          <div class="curt-trim"></div>
+          <div class="tassel"></div>
+          <div class="curt-swag"></div>
+        </div>
+        <div class="curt" id="cr">
+          <div class="curt-trim"></div>
+          <div class="tassel"></div>
+          <div class="curt-swag"></div>
+        </div>
+      </div>
+
+      <!-- Fixed interior train (world scrolls under it) -->
+      <div id="int-train">
+        <!-- CARRIAGE INT -->
+        <div
+          style="
+            position: relative;
+            width: 140px;
+            height: 100px;
+            flex-shrink: 0;
+          "
+        >
+          <svg
+            viewBox="0 0 155 115"
+            width="140"
+            height="100"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <rect x="8" y="18" width="139" height="68" rx="12" fill="#FF69B4" />
+            <rect x="8" y="18" width="139" height="13" rx="6" fill="#FF1493" />
+            <text
+              x="77"
+              y="68"
+              font-size="13"
+              fill="white"
+              text-anchor="middle"
+            >
+              ★ ★ ★
+            </text>
+            <rect
+              x="18"
+              y="28"
+              width="42"
+              height="32"
+              rx="6"
+              fill="#AEE6F8"
+              stroke="white"
+              stroke-width="2.5"
+            />
+            <rect
+              x="94"
+              y="28"
+              width="42"
+              height="32"
+              rx="6"
+              fill="#AEE6F8"
+              stroke="white"
+              stroke-width="2.5"
+            />
+            <rect x="8" y="79" width="139" height="8" rx="3" fill="#FFD700" />
+            <rect x="0" y="50" width="14" height="9" rx="3" fill="#888" />
+            <rect x="18" y="84" width="8" height="20" rx="2" fill="#555" />
+            <rect x="68" y="84" width="8" height="20" rx="2" fill="#555" />
+            <rect x="118" y="84" width="8" height="20" rx="2" fill="#555" />
+            <circle
+              cx="22"
+              cy="100"
+              r="13"
+              fill="#333"
+              stroke="#FFD700"
+              stroke-width="3"
+            />
+            <circle cx="22" cy="100" r="5.5" fill="#FFD700" />
+            <circle
+              cx="72"
+              cy="100"
+              r="13"
+              fill="#333"
+              stroke="#FFD700"
+              stroke-width="3"
+            />
+            <circle cx="72" cy="100" r="5.5" fill="#FFD700" />
+            <circle
+              cx="122"
+              cy="100"
+              r="13"
+              fill="#333"
+              stroke="#FFD700"
+              stroke-width="3"
+            />
+            <circle cx="122" cy="100" r="5.5" fill="#FFD700" />
+          </svg>
+          <div
+            style="
+              position: absolute;
+              top: 24px;
+              left: 15px;
+              width: 44px;
+              height: 33px;
+              overflow: hidden;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+            "
+          >
+            <img
+              id="int-kitty"
+              src="Images/Animation/kuromi1.png"
+              style="height: 33px; width: auto; object-fit: contain"
+              onerror="this.style.display = 'none'"
+            />
+          </div>
+        </div>
+        <!-- ENGINE INT -->
+        <div
+          style="
+            position: relative;
+            width: 190px;
+            height: 122px;
+            flex-shrink: 0;
+          "
+        >
+          <div class="istm is1"></div>
+          <div class="istm is2"></div>
+          <div class="istm is3"></div>
+          <svg
+            viewBox="0 0 210 135"
+            width="190"
+            height="122"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <rect
+              x="28"
+              y="30"
+              width="138"
+              height="72"
+              rx="14"
+              fill="#CC0000"
+            />
+            <rect x="28" y="30" width="138" height="17" rx="8" fill="#990000" />
+            <rect x="136" y="14" width="58" height="88" rx="8" fill="#CC0000" />
+            <rect x="136" y="14" width="58" height="13" rx="6" fill="#8B0000" />
+            <rect
+              x="144"
+              y="22"
+              width="26"
+              height="22"
+              rx="5"
+              fill="#87CEEB"
+              stroke="white"
+              stroke-width="2"
+            />
+            <rect
+              x="168"
+              y="22"
+              width="20"
+              height="22"
+              rx="5"
+              fill="#87CEEB"
+              stroke="white"
+              stroke-width="2"
+            />
+            <rect x="44" y="13" width="17" height="19" rx="4" fill="#333" />
+            <rect x="38" y="9" width="29" height="8" rx="4" fill="#222" />
+            <circle cx="30" cy="58" r="10" fill="#FFD700" />
+            <circle cx="30" cy="58" r="7" fill="#FFFACD" />
+            <rect x="28" y="94" width="138" height="8" rx="3" fill="#FFD700" />
+            <text
+              x="90"
+              y="82"
+              font-size="14"
+              fill="#FFD700"
+              text-anchor="middle"
+            >
+              ★
+            </text>
+            <rect x="10" y="90" width="22" height="10" rx="3" fill="#555" />
+            <circle
+              cx="55"
+              cy="112"
+              r="17"
+              fill="#222"
+              stroke="#FFD700"
+              stroke-width="3.5"
+            />
+            <circle cx="55" cy="112" r="7.5" fill="#FFD700" />
+            <circle
+              cx="103"
+              cy="112"
+              r="17"
+              fill="#222"
+              stroke="#FFD700"
+              stroke-width="3.5"
+            />
+            <circle cx="103" cy="112" r="7.5" fill="#FFD700" />
+            <circle
+              cx="150"
+              cy="112"
+              r="15"
+              fill="#222"
+              stroke="#FFD700"
+              stroke-width="3.5"
+            />
+            <circle cx="150" cy="112" r="6.5" fill="#FFD700" />
+            <rect x="28" y="106" width="126" height="6" rx="3" fill="#888" />
+            <rect x="188" y="56" width="20" height="9" rx="3" fill="#888" />
+          </svg>
+          <div
+            style="
+              position: absolute;
+              top: 7px;
+              left: 105px;
+              width: 50px;
+              height: 50px;
+            "
+          >
+            <img
+              id="int-boy"
+              src="Images/Animation/Boy1.png"
+              style="width: 50px; height: 50px; object-fit: contain"
+              onerror="this.style.display = 'none'"
+            />
+          </div>
+        </div>
+      </div>
+
+      <!-- Frame popup (fixed, slides in from right) -->
+      <div id="frame-popup">
+        <div class="fp-border" id="fp-border">
+          <img
+            id="fp-img"
+            src=""
+            alt=""
+            style="display: block; width: 100%; height: 100%; object-fit: cover"
+          />
+          <div class="fp-fallback" id="fp-fallback" style="display: none"></div>
+        </div>
+        <div class="fp-plate" id="fp-plate">Hello Kitty</div>
+        <img
+          class="fp-hk"
+          id="fp-hk"
+          src=""
+          style="width: 42px; height: 42px; object-fit: contain"
+          onerror="this.style.display = 'none'"
+        />
+      </div>
+
+      <!-- Station name sign -->
+      <div id="station-sign"></div>
+
+      <!-- Balloons (fixed) -->
+      <div class="iball" style="left: 2%; top: 55%">🎈</div>
+      <div class="iball" style="left: 8%; top: 30%; animation-delay: 0.7s">
+        🎈
+      </div>
+      <div class="iball" style="right: 2%; top: 52%; animation-delay: 0.3s">
+        🎈
+      </div>
+      <div class="iball" style="right: 8%; top: 28%; animation-delay: 1.1s">
+        🎈
+      </div>
+
+      <!-- Confetti container -->
+      <div id="confetti"></div>
+
+      <!-- Navigation buttons -->
+      <div id="nav-btns">
+        <button class="nav-btn" id="btn-restart" onclick="restartAll()">
+          🚂 Restart
+        </button>
+        <button class="nav-btn" id="btn-next" onclick="nextStation()">
+          Next ➜
+        </button>
+      </div>
+    </div>
+    <!-- end interior -->
+
+    <script>
+      // ═══════════════════════════════════════════════════════
+      //  STATIONS / FRAMES DATA
+      // ═══════════════════════════════════════════════════════
+      const STATIONS = [
+        {
+          label: "Kitty Girl ✨",
+          sign: "Station 1 — Kitty Girl",
+          src: "Images/Animation/kuromi1.png",
+          alt: "Images/Animation/kuromi2.png",
+          peek: "Images/Animation/kuromi1.png",
+          fallback: "🐱",
+          bg: "linear-gradient(135deg,#FFB6C1,#FF69B4)",
+          boyFrame: "Images/Animation/Boy1.png",
+          kittyFrame: "Images/Animation/kuromi1.png",
+        },
+        {
+          label: "Kitty Walk 🎀",
+          sign: "Station 2 — Kitty Walk",
+          src: "Images/Animation/walk1.png",
+          alt: "Images/Animation/walk2.png",
+          peek: "Images/Animation/kuromi2.png",
+          fallback: "🎀",
+          bg: "linear-gradient(135deg,#FFDDE8,#FF8FAB)",
+          boyFrame: "Images/Animation/Boy2.png",
+          kittyFrame: "Images/Animation/kuromi2.png",
+        },
+        {
+          label: "On the Swing 🎠",
+          sign: "Station 3 — Swing Time",
+          src: "Images/Animation/swing.png",
+          alt: "Images/Animation/kuromi3.png",
+          peek: "Images/Animation/kuromi3.png",
+          fallback: "🎠",
+          bg: "linear-gradient(135deg,#FFD0E8,#FF4499)",
+          boyFrame: "Images/Animation/push1.png",
+          kittyFrame: "Images/Animation/swing.png",
+        },
+        {
+          label: "Kiss Moment 💋",
+          sign: "Station 4 — Love Stop ♡",
+          src: "Images/Animation/kiss.png",
+          alt: "Images/Animation/kiss_boy.png",
+          peek: "Images/Animation/kiss_boy.png",
+          fallback: "💋",
+          bg: "linear-gradient(135deg,#FF8FAB,#CC0044)",
+          boyFrame: "Images/Animation/kiss_boy.png",
+          kittyFrame: "Images/Animation/kiss.png",
+        },
+        {
+          label: "Boy Kitty 🚂",
+          sign: "Station 5 — Boy Stop",
+          src: "Images/Animation/Boy1.png",
+          alt: "Images/Animation/Boy2.png",
+          peek: "Images/Animation/Boy1.png",
+          fallback: "🚂",
+          bg: "linear-gradient(135deg,#B0C8FF,#4169E1)",
+          boyFrame: "Images/Animation/Boy3.png",
+          kittyFrame: "Images/Animation/kuromi1.png",
+        },
+        {
+          label: "Death Defying! ⚡",
+          sign: "Station 6 — The Finale",
+          src: "Images/Animation/death.png",
+          alt: "Images/Animation/slide.png",
+          peek: "Images/Animation/kuromi3.png",
+          fallback: "⚡",
+          bg: "linear-gradient(135deg,#FFD700,#FF4500)",
+          boyFrame: "Images/Animation/push3.png",
+          kittyFrame: "Images/Animation/walk3.png",
+        },
+      ];
+
+      const STATION_SPACING = 680; // px between stations in world space
+
+      // ═══════════════════════════════════════════════════════
+      //  BUILD WORLD DECORATIONS
+      // ═══════════════════════════════════════════════════════
+      const worldDecor = document.getElementById("world-decor");
+      const PCOLORS = [
+        "#DC143C",
+        "#4169E1",
+        "#FFD700",
+        "#228B22",
+        "#FF69B4",
+        "#FF8C00",
+      ];
+
+      function buildWorld() {
+        const totalW = STATION_SPACING * (STATIONS.length + 1);
+        document.getElementById("world").style.width = totalW + "px";
+
+        // Hanging bulbs across entire world
+        for (let i = 0; i < Math.floor(totalW / 55); i++) {
+          const w = document.createElement("div");
+          w.className = "hbulb-wrap";
+          w.style.cssText = `left:${i * 55 + 20}px;top:0;`;
+          const wire = document.createElement("div");
+          wire.className = "hbulb-wire";
+          wire.style.height = 20 + Math.random() * 32 + "px";
+          const lamp = document.createElement("div");
+          lamp.className = "hbulb-lamp";
+          lamp.style.animationDelay = Math.random() * 1.6 + "s";
+          w.appendChild(wire);
+          w.appendChild(lamp);
+          worldDecor.appendChild(w);
+        }
+
+        // Pennant lines between stations
+        for (let s = 0; s < STATIONS.length + 1; s++) {
+          const lineX = s * STATION_SPACING;
+          const line = document.createElement("div");
+          line.className = "pennant-line";
+          line.style.cssText = `left:${lineX}px;top:16%;width:${STATION_SPACING}px;`;
+          worldDecor.appendChild(line);
+          for (let p = 0; p < Math.floor(STATION_SPACING / 40); p++) {
+            const tri = document.createElement("div");
+            tri.className = "pennant-tri";
+            tri.style.cssText = `left:${p * 40}px;width:22px;height:18px;background:${PCOLORS[(s + p) % PCOLORS.length]};animation-delay:${(p * 0.15) % 1.4}s;`;
+            line.appendChild(tri);
+          }
+        }
+
+        // Station platforms + name signs in world
+        STATIONS.forEach((st, i) => {
+          const x = (i + 1) * STATION_SPACING - 80;
+          const platform = document.createElement("div");
+          platform.className = "station";
+          platform.style.cssText = `left:${x}px;`;
+          worldDecor.appendChild(platform);
+
+          // Decorative column
+          const col = document.createElement("div");
+          col.style.cssText = `position:absolute;left:${x + 80}px;bottom:22%;width:16px;height:180px;
+      background:linear-gradient(180deg,#FFD700,#8B4513 40%,#FFD700);
+      border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,.5);`;
+          worldDecor.appendChild(col);
+          const colTop = document.createElement("div");
+          colTop.style.cssText = `position:absolute;left:${x + 73}px;bottom:calc(22% + 180px);
+      width:30px;height:30px;border-radius:50%;
+      background:radial-gradient(circle at 40% 35%,#fffacd,#FFD700 55%,#B8860B);
+      box-shadow:0 0 16px #FFD700;`;
+          worldDecor.appendChild(colTop);
+        });
+      }
+
+      buildWorld();
+
+      // Progress dots
+      const progress = document.getElementById("progress");
+      STATIONS.forEach((_, i) => {
+        const d = document.createElement("div");
+        d.className = "prog-dot";
+        d.id = "dot-" + i;
+        progress.appendChild(d);
+      });
+
+      // ═══════════════════════════════════════════════════════
+      //  AUDIO
+      // ═══════════════════════════════════════════════════════
+      function chooChoo() {
+        try {
+          const ctx = new (window.AudioContext || window.webkitAudioContext)();
+          const o = ctx.createOscillator(),
+            g = ctx.createGain();
+          o.connect(g);
+          g.connect(ctx.destination);
+          o.type = "sawtooth";
+          o.frequency.setValueAtTime(220, ctx.currentTime);
+          o.frequency.linearRampToValueAtTime(155, ctx.currentTime + 0.32);
+          g.gain.setValueAtTime(0.13, ctx.currentTime);
+          g.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.42);
+          o.start();
+          o.stop(ctx.currentTime + 0.46);
+        } catch (e) {}
+      }
+      function ding() {
+        try {
+          const ctx = new (window.AudioContext || window.webkitAudioContext)();
+          const o = ctx.createOscillator(),
+            g = ctx.createGain();
+          o.connect(g);
+          g.connect(ctx.destination);
+          o.type = "sine";
+          o.frequency.setValueAtTime(880, ctx.currentTime);
+          o.frequency.exponentialRampToValueAtTime(660, ctx.currentTime + 0.4);
+          g.gain.setValueAtTime(0.2, ctx.currentTime);
+          g.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.5);
+          o.start();
+          o.stop(ctx.currentTime + 0.55);
+        } catch (e) {}
+      }
+
+      // ═══════════════════════════════════════════════════════
+      //  CONFETTI
+      // ═══════════════════════════════════════════════════════
+      const CC = [
+        "#FFD700",
+        "#FF69B4",
+        "#DC143C",
+        "#4169E1",
+        "#32CD32",
+        "#FF4500",
+        "#FF1493",
+      ];
+      function spawnConfetti(n = 30) {
+        const c = document.getElementById("confetti");
+        for (let i = 0; i < n; i++) {
+          const d = document.createElement("div");
+          d.className = "cfti";
+          d.style.left = Math.random() * 100 + "%";
+          d.style.background = CC[Math.floor(Math.random() * CC.length)];
+          d.style.animationDuration = 2 + Math.random() * 3 + "s";
+          d.style.animationDelay = Math.random() * 1.5 + "s";
+          d.style.width = 5 + Math.random() * 9 + "px";
+          d.style.height = 5 + Math.random() * 9 + "px";
+          c.appendChild(d);
+          setTimeout(() => d.remove(), 5000);
+        }
+      }
+
+      // ═══════════════════════════════════════════════════════
+      //  STATE MACHINE
+      // ═══════════════════════════════════════════════════════
+      let currentStation = -1; // -1 = not started inside yet
+      let totalStations = STATIONS.length;
+      let isMoving = false;
+      let interiorStarted = false;
+
+      const world = document.getElementById("world");
+      const intTrain = document.getElementById("int-train");
+      const framePopup = document.getElementById("frame-popup");
+      const stationSign = document.getElementById("station-sign");
+      const btnNext = document.getElementById("btn-next");
+      const btnRestart = document.getElementById("btn-restart");
+
+      function setWorldX(px) {
+        world.style.transition = "transform 1.4s cubic-bezier(.55,0,.25,1)";
+        world.style.transform = `translateX(${-px}px)`;
+      }
+
+      function updateDots(idx) {
+        STATIONS.forEach((_, i) => {
+          const d = document.getElementById("dot-" + i);
+          if (!d) return;
+          d.className =
+            "prog-dot" + (i < idx ? " done" : i === idx ? " active" : "");
+        });
+      }
+
+      function showFrame(idx) {
+        const st = STATIONS[idx];
+        const img = document.getElementById("fp-img");
+        const fb = document.getElementById("fp-fallback");
+        const plate = document.getElementById("fp-plate");
+        const hk = document.getElementById("fp-hk");
+
+        img.style.display = "block";
+        fb.style.display = "none";
+        img.src = st.src;
+        img.onerror = function () {
+          this.src = st.alt;
+          this.onerror = function () {
+            this.style.display = "none";
+            fb.style.display = "flex";
+            fb.textContent = st.fallback;
+            const bgs = [
+              "linear-gradient(135deg,#FFB6C1,#FF69B4)",
+              "linear-gradient(135deg,#FFDDE8,#FF8FAB)",
+              "linear-gradient(135deg,#FFD0E8,#FF4499)",
+              "linear-gradient(135deg,#FF8FAB,#CC0044)",
+              "linear-gradient(135deg,#B0C8FF,#4169E1)",
+              "linear-gradient(135deg,#FFD700,#FF4500)",
+            ];
+            fb.style.background = bgs[idx % bgs.length];
+          };
+        };
+
+        plate.textContent = st.label;
+        hk.src = st.peek;
+        hk.onerror = function () {
+          this.style.display = "none";
+        };
+
+        // Also update train characters
+        document.getElementById("int-kitty").src =
+          st.kittyFrame || "Images/Animation/kuromi1.png";
+        document.getElementById("int-boy").src =
+          st.boyFrame || "Images/Animation/Boy1.png";
+
+        framePopup.classList.add("show");
+      }
+
+      function hideFrame() {
+        framePopup.classList.remove("show");
+      }
+
+      function showStationSign(text) {
+        stationSign.textContent = text;
+        stationSign.classList.add("show");
+        setTimeout(() => stationSign.classList.remove("show"), 2200);
+      }
+
+      // Advance to next station
+      function nextStation() {
+        if (isMoving) return;
+        const next = currentStation + 1;
+        if (next >= totalStations) {
+          // All done — loop back
+          finaleLoop();
+          return;
+        }
+        hideFrame();
+        isMoving = true;
+        btnNext.classList.remove("show");
+
+        // WORLD SCROLLS to next station
+        const targetX = (next + 1) * STATION_SPACING - 200;
+        setWorldX(targetX);
+
+        chooChoo();
+        setTimeout(chooChoo, 900);
+
+        // After world scrolls (1.4s) → bounce + show frame
+        setTimeout(() => {
+          currentStation = next;
+          isMoving = false;
+          // Bounce the train
+          intTrain.classList.add("stopping");
+          setTimeout(() => intTrain.classList.remove("stopping"), 420);
+          ding();
+          spawnConfetti(20);
+          updateDots(currentStation);
+          showStationSign(STATIONS[currentStation].sign);
+          setTimeout(() => {
+            showFrame(currentStation);
+            // Show next button (or finish)
+            setTimeout(() => {
+              if (currentStation < totalStations - 1) {
+                btnNext.textContent = "Next ➜";
+              } else {
+                btnNext.textContent = "🎉 Restart!";
+              }
+              btnNext.classList.add("show");
+              btnRestart.classList.add("show");
+            }, 800);
+          }, 400);
+        }, 1500);
+      }
+
+      function finaleLoop() {
+        hideFrame();
+        btnNext.classList.remove("show");
+        btnRestart.classList.remove("show");
+        isMoving = true;
+        // Train zooms all the way to the right (exit)
+        world.style.transition = "transform 2s cubic-bezier(.4,0,.8,1)";
+        world.style.transform = `translateX(-${(totalStations + 1) * STATION_SPACING}px)`;
+        chooChoo();
+        setTimeout(chooChoo, 600);
+        setTimeout(chooChoo, 1200);
+        setTimeout(restartAll, 2800);
+      }
+
+      // ═══════════════════════════════════════════════════════
+      //  ENTRY SEQUENCE
+      // ═══════════════════════════════════════════════════════
+      function enterCircus() {
+        if (interiorStarted) return;
+        interiorStarted = true;
+
+        // Hide exterior
+        document.getElementById("exterior").classList.add("hidden");
+
+        // Show interior (curtains still closed)
+        const interior = document.getElementById("interior");
+        interior.classList.add("show");
+        document.getElementById("int-sign").classList.add("show");
+
+        // Reset world to far-left (just inside entrance)
+        world.style.transition = "none";
+        world.style.transform = "translateX(0px)";
+
+        // Open curtains after short delay
+        setTimeout(() => {
+          document.getElementById("curtains").classList.add("open");
+          chooChoo();
+          spawnConfetti(25);
+          // First world scroll — train enters past entrance
+          setTimeout(() => {
+            setWorldX(120);
+            // After entering, show first "next" button
+            setTimeout(() => {
+              btnNext.textContent = "Next Station ➜";
+              btnNext.classList.add("show");
+              btnRestart.classList.add("show");
+            }, 1600);
+          }, 800);
+        }, 700);
+      }
+
+      // ═══════════════════════════════════════════════════════
+      //  RESTART
+      // ═══════════════════════════════════════════════════════
+      function restartAll() {
+        // Reset state
+        currentStation = -1;
+        isMoving = false;
+        interiorStarted = false;
+        hideFrame();
+        btnNext.classList.remove("show");
+        btnRestart.classList.remove("show");
+        document.getElementById("confetti").innerHTML = "";
+        updateDots(-1);
+
+        // Reset curtains
+        document.getElementById("curtains").classList.remove("open");
+        document.getElementById("int-sign").classList.remove("show");
+
+        // Hide interior
+        const interior = document.getElementById("interior");
+        interior.classList.remove("show");
+
+        // Reset world
+        world.style.transition = "none";
+        world.style.transform = "translateX(0)";
+
+        // Reset exterior
+        const ext = document.getElementById("exterior");
+        ext.classList.remove("hidden");
+        ext.style.opacity = "1";
+
+        // Replay exterior train
+        const extTrain = document.getElementById("ext-train");
+        extTrain.style.animation = "none";
+        void extTrain.offsetWidth;
+        extTrain.style.animation =
+          "extRide 6s cubic-bezier(.4,0,.55,1) forwards";
+
+        // Schedule entry again
+        setTimeout(() => chooChoo(), 600);
+        setTimeout(() => chooChoo(), 2500);
+        setTimeout(enterCircus, 5800);
+      }
+
+      // ═══════════════════════════════════════════════════════
+      //  KICK OFF
+      // ═══════════════════════════════════════════════════════
+      setTimeout(() => chooChoo(), 600);
+      setTimeout(() => chooChoo(), 2500);
+      setTimeout(enterCircus, 5800);
+    </script>
+  </body>
+</html>
